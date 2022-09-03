@@ -7771,6 +7771,38 @@ or embedded instantiation.  This package provides the JMX management.")))
        ,@(package-inputs java-eclipse-jetty-http-9.2)))
     (native-inputs (package-native-inputs java-eclipse-jetty-util-9.2))))
 
+(define-public java-eclipse-jetty-client
+  (package
+    (inherit java-eclipse-jetty-util)
+    (name "java-eclipse-jetty-client")
+    (arguments
+     `(#:jar-name "eclipse-jetty-client.jar"
+       #:source-dir "src/main/java"
+       #:jdk ,icedtea-8
+       #:tests? #f; require junit 5
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'chdir
+           (lambda _
+             (chdir "jetty-client")
+             #t))
+         (add-before 'build 'copy-resources
+           (lambda _
+             (mkdir-p "build/classes")
+             (copy-recursively "src/main/resources/" "build/classes/")
+             #t)))))
+    (inputs
+     `(("slf4j" ,java-slf4j-api)
+       ("servlet" ,java-javaee-servletapi)
+       ("io" ,java-eclipse-jetty-io)
+       ("jmx" ,java-eclipse-jetty-jmx)
+       ("http" ,java-eclipse-jetty-http)
+       ("util" ,java-eclipse-jetty-util)))
+    (synopsis "Jetty :: Client")
+    (description "The Jetty Web Server provides an HTTP server and Servlet
+container capable of serving static and dynamic content either from a standalone
+or embedded instantiation.  This package provides the HTTP client.")))
+
 (define-public java-eclipse-jetty-server
   (package
     (inherit java-eclipse-jetty-util)
