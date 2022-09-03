@@ -373,6 +373,32 @@ All operations work on either byte arrays or Input/OutputStreams.  Performance
 is on par with Java implementations, e.g., Apache commons-codec.")
     (license license:epl1.0)))
 
+(define-public clojure-data-json
+  (package
+    (name "clojure-data-json")
+    (version "2.4.0")
+    (home-page "https://github.com/clojure/data.json")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1xx3hiy62rrph4y4g3aqa1lfb0ns3p6vdvcvlpgm5w1npl70n2r5"))))
+    (build-system clojure-build-system)
+    (arguments
+     '(#:source-dirs '("src/main/clojure")
+       #:test-dirs '("src/test/clojure")
+       #:doc-dirs '()))
+    (native-inputs (list clojure-test-check))
+    (synopsis "Clojure library for reading and writing JSON data")
+    (description "@code{data.json} is a Clojure library for reading and
+writing JSON data.  @code{data.xml} is compliant with the JSON spec and has no
+external dependencies")
+    (license license:epl1.0)))
+
 (define-public clojure-data-xml
   (package
     (name "clojure-data-xml")
