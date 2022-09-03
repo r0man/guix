@@ -860,3 +860,29 @@ dependency graph expansion and the creation of classpaths.")
 indicated by git SHAs.  This library provides this functionality and also
 keeps a cache of git directories and working trees that can be reused.")
     (license license:epl1.0)))
+
+(define-public clojure-tools-reader
+  (package
+    (name "clojure-tools-reader")
+    (version "1.4.2")
+    (home-page "https://github.com/clojure/tools.reader")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0rl0nas23f0a0iy5wl0v5kx4b6dqmi2xnvx4wr0xlpqbapz2ng3y"))))
+    (build-system clojure-build-system)
+    (arguments
+     '(#:doc-dirs '()
+       #:source-dirs '("src/main/clojure")
+       #:test-dirs '("src/test/clojure")
+       #:test-exclude '(clojure.tools.common-tests))) ; Loaded by other tests.
+    (synopsis "Clojure reader written in Clojure.")
+    (description "The clojure.tools.reader library offers all functionality
+provided by the Clojure Core reader and more.  It adds metadata such as column
+and line numbers not only to lists, but also to symbols, vectors and maps.")
+    (license license:epl1.0)))
