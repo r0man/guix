@@ -996,6 +996,27 @@ provided by the Clojure Core reader and more.  It adds metadata such as column
 and line numbers not only to lists, but also to symbols, vectors and maps.")
     (license license:epl1.0)))
 
+(define-public cognitect-aws-endpoints
+  (package
+    (name "cognitect-aws-endpoints")
+    (version "1.1.12.718")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://repo1.maven.org/maven2/com/"
+                                  "cognitect/aws/endpoints/" version
+                                  "/endpoints-" version
+                                  "-sources.jar"))
+              (file-name (string-append name "-" version ".jar"))
+              (sha256
+               (base32
+                "05dwlbyg2frcbsfw72rs8nhzm7iar1431x3is67vhdm3xxkdlhd4"))))
+    (build-system copy-build-system)
+    (synopsis "Endpoint resources for the Cognitect AWS API")
+    (description "Endpoint resources for the Cognitect AWS API generated from
+the AWS JavaScript SDK.")
+    (home-page "https://search.maven.org/artifact/com.cognitect.aws/endpoints")
+    (license license:asl2.0)))
+
 (define-public http-kit
   (package
     (name "http-kit")
