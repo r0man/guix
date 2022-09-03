@@ -7031,6 +7031,18 @@ or embedded instantiation.  This package provides the JMX management.")))
 container capable of serving static and dynamic content either from a standalone
 or embedded instantiation.  This package provides the HTTP client.")))
 
+(define-public java-eclipse-jetty-client-9.2
+  (package
+    (inherit java-eclipse-jetty-client)
+    (version (package-version java-eclipse-jetty-util-9.2))
+    (source (package-source java-eclipse-jetty-util-9.2))
+    (inputs
+     `(("io" ,java-eclipse-jetty-io-9.2)
+       ("jmx" ,java-eclipse-jetty-jmx-9.2)
+       ("http" ,java-eclipse-jetty-http-9.2)
+       ("util" ,java-eclipse-jetty-util-9.2)
+       ,@(package-inputs java-eclipse-jetty-util-9.2)))))
+
 (define-public java-eclipse-jetty-server
   (package
     (inherit java-eclipse-jetty-util)
