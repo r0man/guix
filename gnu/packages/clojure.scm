@@ -25,6 +25,7 @@
   #:use-module (gnu packages java)
   #:use-module (gnu packages maven)
   #:use-module (gnu packages readline)
+  #:use-module (gnu packages web)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix download)
@@ -1036,6 +1037,37 @@ the AWS JavaScript SDK.")
     (description "S3 resources for the Cognitect AWS API generated from the
 AWS JavaScript SDK.")
     (home-page "https://search.maven.org/artifact/com.cognitect.aws/s3")
+    (license license:asl2.0)))
+
+(define-public cognitect-http-client
+  (package
+    (name "cognitect-http-client")
+    (version "1.0.127")
+    (source (origin
+              (method url-fetch)
+              ;; Fetch sources from Maven. There doesn't seem to be an
+              ;; official repository.
+              (uri (string-append "https://repo1.maven.org/maven2/com/"
+                                  "cognitect/http-client/" version
+                                  "/http-client-" version ".jar"))
+              (file-name (string-append name "-" version ".jar"))
+              (sha256
+               (base32
+                "027ki6wb3xv6z25ik3f3yj2gjasrq026yyjpfwpnn74zy66rvyq1"))))
+    (build-system clojure-build-system)
+    (arguments
+     `(#:source-dirs '("src")
+       #:test-dirs '()
+       #:doc-dirs '()))
+    (propagated-inputs
+     (list clojure-core-async
+           java-eclipse-jetty-client
+           java-eclipse-jetty-io
+           java-eclipse-jetty-http
+           java-eclipse-jetty-util))
+    (synopsis "Clojure HTTP client library based on Jetty")
+    (description "Cognitect's HTTP client in Clojure based on Jetty.")
+    (home-page "https://search.maven.org/artifact/com.cognitect/http-client")
     (license license:asl2.0)))
 
 (define-public http-kit
