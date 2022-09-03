@@ -925,6 +925,27 @@ the AWS JavaScript SDK.")
     (home-page "https://search.maven.org/artifact/com.cognitect.aws/endpoints")
     (license license:asl2.0)))
 
+(define-public cognitect-aws-s3
+  (package
+    (name "cognitect-aws-s3")
+    (version "822.2.1145.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://repo1.maven.org/maven2/com/"
+                                  "cognitect/aws/s3/" version
+                                  "/s3-" version
+                                  "-sources.jar"))
+              (file-name (string-append name "-" version ".jar"))
+              (sha256
+               (base32
+                "0x89fdlnyp4fnl2x55sn730989qga9kp88z6ih7zfj578yy4d6nq"))))
+    (build-system copy-build-system)
+    (synopsis "S3 resources for the Cognitect AWS API")
+    (description "S3 resources for the Cognitect AWS API generated from the
+AWS JavaScript SDK.")
+    (home-page "https://search.maven.org/artifact/com.cognitect.aws/s3")
+    (license license:asl2.0)))
+
 (define-public http-kit
   (package
     (name "http-kit")
