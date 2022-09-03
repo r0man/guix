@@ -903,3 +903,28 @@ is first loaded.")
 provided by the Clojure Core reader and more.  It adds metadata such as column
 and line numbers not only to lists, but also to symbols, vectors and maps.")
     (license license:epl1.0)))
+
+(define-public http-kit
+  (package
+    (name "http-kit")
+    (version "2.6.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/http-kit/http-kit")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1kbw43a9w0xg9ybqvvj6vcvcpp1s3a9ni4gxvk25bwwawinhlhrn"))))
+    (build-system clojure-build-system)
+    (arguments
+     '(#:java-source-dirs '("src/java")
+       #:source-dirs '("src")
+       #:doc-dirs '()
+       #:tests? #f))  ;; Too many unpackaged dependencies
+    (synopsis "Simple, high-performance event-driven HTTP client and server for Clojure")
+    (description "Minimalist, event-driven, high-performance Clojure HTTP
+client and server library with WebSocket and asynchronous support.")
+    (home-page "https://github.com/http-kit/http-kit")
+    (license license:asl2.0)))
