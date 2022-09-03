@@ -635,6 +635,34 @@ produces an abstract syntax tree in the EDN ( Extensible Data Notation)
 format.")
     (license license:epl1.0)))
 
+(define-public clojure-tools-analyzer-jvm
+  (package
+    (name "clojure-tools-analyzer-jvm")
+    (version "1.2.2")
+    (home-page "https://github.com/clojure/tools.analyzer.jvm")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url home-page)
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1ibvgvfa4618l5d0pff9gjar1s0fwagi029v4allk7z3swb93ibr"))))
+    (build-system clojure-build-system)
+    (arguments
+     '(#:source-dirs '("src/main/clojure")
+       #:test-dirs '("src/test/clojure")
+       #:doc-dirs '("docs")))
+    (propagated-inputs (list clojure-tools-analyzer
+                             clojure-tools-reader
+                             clojure-core-memoize
+                             java-asm))
+    (synopsis "An analyzer for Clojure code targeting the JVM.")
+    (description "An analyzer for Clojure code, written on top of
+tools.analyzer, providing additional JVM-specific passes.")
+    (license license:epl1.0)))
+
 (define-public clojure-tools-macro
   (package
     (name "clojure-tools-macro")
