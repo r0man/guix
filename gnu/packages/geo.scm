@@ -1043,7 +1043,7 @@ development.")
 (define-public gdal
   (package
     (name "gdal")
-    (version "3.5.1")
+    (version "3.6.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -1051,7 +1051,7 @@ development.")
                      version ".tar.gz"))
               (sha256
                (base32
-                "1l93q7xf6qx9ck5axfkf3ygmvclxkvrjd8x00ckn7j0d0750ci3w"))
+                "1nri6p495chlm63dcylq2wwmvlf90pn2kr3jf5ybkby6q3p7jshd"))
               (modules '((guix build utils)))
               (snippet
                 `(begin
