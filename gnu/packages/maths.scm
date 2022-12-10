@@ -1849,16 +1849,16 @@ similar to MATLAB, GNU Octave or SciPy.")
 (define-public netcdf
   (package
     (name "netcdf")
-    (version "4.7.4")
+    (version "4.9.0")
     (source
      (origin
        (method url-fetch)
        (uri (string-append
-             "https://www.unidata.ucar.edu/downloads/netcdf/ftp/"
-             "netcdf-c-" version ".tar.gz"))
+             "https://downloads.unidata.ucar.edu/netcdf-c/" version
+             "/netcdf-c-" version ".tar.gz"))
        (sha256
         (base32
-         "1a2fpp15a2rl1m50gcvvzd9y6bavl6vjf9zzf63sz5gdmq06yiqf"))
+         "0j8b814mjdqvqanzmrxpq8hn33n22cdzb3gf9vhya24wnwi615ac"))
        (modules '((guix build utils)))
        (snippet
         ;; Make sure this variable is defined only once.  Failing to do so
@@ -1866,20 +1866,35 @@ similar to MATLAB, GNU Octave or SciPy.")
         ;; multiple-definition link error with GCC 10.
         '(substitute* "ncdump/ocprint.c"
            (("^int ocdebug") "static int ocdebug")))
-       (patches (search-patches "netcdf-date-time.patch"))))
-    (build-system gnu-build-system)
+       (patches (search-patches "netcdf-date-time.patch"
+                                "netcdf-4.9.0-fix-cmake-typo.patch"))))
+    (build-system cmake-build-system)
     (native-inputs
-     (list m4 doxygen graphviz))
+     (list m4 doxygen graphviz unzip))
     (inputs
      `(("hdf4" ,hdf4-alt)
-       ("hdf5" ,hdf5)
+       ("hdf5" ,hdf5-1.12)
        ("curl" ,curl)
        ("zlib" ,zlib)
-       ("libjpeg" ,libjpeg-turbo)))
+       ("libjpeg" ,libjpeg-turbo)
+       ("libxml2" ,libxml2)))
     (arguments
-     `(#:configure-flags '("--enable-doxygen" "--enable-dot" "--enable-hdf4")
-
-       #:phases (modify-phases %standard-phases
+     `(#:configure-flags
+       '("-DENABLE_BYTERANGE=ON"
+         "-DENABLE_CDF5=ON"
+         "-DENABLE_DAP_LONG_TESTS=OFF"
+         "-DENABLE_DAP_REMOTE_TESTS=OFF"
+         "-DENABLE_EXAMPLE_TESTS=OFF"
+         "-DENABLE_EXTRA_TESTS=OFF"
+         "-DENABLE_FILTER_TESTING=OFF"
+         "-DENABLE_LARGE_FILE_TESTS=OFF"
+         "-DENABLE_UNIT_TESTS=OFF"
+         "-DSOURCE_DATE_EPOCH=0")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'disable-nc-byterange-test
+           (lambda _
+             (invoke "sed" "-i" "/test_byterange/d" "nc_test/CMakeLists.txt")))
          (add-before 'configure 'fix-source-date
            (lambda _
              ;; As we ${SOURCE_DATE_EPOCH} evaluates to "1" in the build
@@ -1899,8 +1914,11 @@ similar to MATLAB, GNU Octave or SciPy.")
              (substitute* "libnetcdf.settings"
                (("(/gnu/store/)([0-9A-Za-z]*)" all prefix hash)
                 (string-append prefix (string-take hash 10) "...")))
-             #t)))
-
+             #t))
+         (add-before 'check 'fix-test-rcmerge
+           (lambda _
+             ;; Set HOME, to fix the test-rcmerge.
+             (setenv "HOME" "/tmp"))))
        #:parallel-tests? #f))           ;various race conditions
     (home-page "https://www.unidata.ucar.edu/software/netcdf/")
     (synopsis "Library for scientific data")
