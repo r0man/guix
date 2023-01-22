@@ -58,6 +58,8 @@
        '(,@(match (%current-system)
              ((or "i686-linux" "x86_64-linux")
               '())
+             ("aarch64-linux"
+              (list "--with-lg-page=14"))
              ("powerpc-linux"
               (list "--disable-thp" "CPPFLAGS=-maltivec"))
              (_
