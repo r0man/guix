@@ -588,7 +588,8 @@ fi~%"))))
         ;; directly in the MBR-GAP (space between the end of the MBR and the
         ;; first partition).
         (apply invoke grub-mkimage
-               "-O" "i386-pc"
+               "-O" (cond ((target-x86?) "i386-pc")
+                          ((target-arm?) "arm64-efi"))
                "-o" "core.img"
                "-p" (format #f "(~a)/boot/grub" root-device)
                modules)
