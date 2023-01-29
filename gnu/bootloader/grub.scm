@@ -234,7 +234,7 @@ fi~%"
 and return a file in the format for GRUB keymaps.  LAYOUT must be present in
 the 'share/X11/xkb/symbols/' directory of 'xkeyboard-config'."
   (define builder
-    (owith-imported-modules '((guix build utils))
+    (with-imported-modules '((guix build utils))
       #~(begin
           (use-modules (guix build utils))
 
