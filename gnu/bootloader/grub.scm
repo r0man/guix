@@ -575,21 +575,22 @@ fi~%"))))
   #~(lambda (bootloader root-index image)
       ;; Install GRUB on the given IMAGE. The root partition index is
       ;; ROOT-INDEX.
-      (let ((grub-mkimage
+      (let* ((arch (cond ((target-x86?) "i386-pc")
+                        ((target-arm?) "arm64-efi")) )
+             (grub-mkimage
              (string-append bootloader "/bin/grub-mkimage"))
-            (modules '("biosdisk" "part_msdos" "fat" "ext2"))
-            (grub-bios-setup
-             (string-append bootloader "/sbin/grub-bios-setup"))
-            (root-device (format #f "hd0,msdos~a" root-index))
-            (boot-img (string-append bootloader "/lib/grub/i386-pc/boot.img"))
-            (device-map "device.map"))
+             (modules '("biosdisk" "part_msdos" "fat" "ext2"))
+             (grub-bios-setup
+              (string-append bootloader "/sbin/grub-bios-setup"))
+             (root-device (format #f "hd0,msdos~a" root-index))
+             (boot-img (string-append bootloader "/lib/grub/" arch "/boot.img"))
+             (device-map "device.map"))
 
         ;; Create a minimal, standalone GRUB image that will be written
         ;; directly in the MBR-GAP (space between the end of the MBR and the
         ;; first partition).
         (apply invoke grub-mkimage
-               "-O" (cond ((target-x86?) "i386-pc")
-                          ((target-arm?) "arm64-efi"))
+               "-O" arch
                "-o" "core.img"
                "-p" (format #f "(~a)/boot/grub" root-device)
                modules)
