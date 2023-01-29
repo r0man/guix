@@ -234,7 +234,7 @@ fi~%"
 and return a file in the format for GRUB keymaps.  LAYOUT must be present in
 the 'share/X11/xkb/symbols/' directory of 'xkeyboard-config'."
   (define builder
-    (with-imported-modules '((guix build utils))
+    (owith-imported-modules '((guix build utils))
       #~(begin
           (use-modules (guix build utils))
 
@@ -572,47 +572,49 @@ fi~%"))))
                                 install-dir))))))
 
 (define install-grub-disk-image
-  #~(lambda (bootloader root-index image)
-      ;; Install GRUB on the given IMAGE. The root partition index is
-      ;; ROOT-INDEX.
-      (let* ((arch (cond ((target-x86?) "i386-pc")
-                        ((target-arm?) "arm64-efi")) )
-             (grub-mkimage
-             (string-append bootloader "/bin/grub-mkimage"))
-             (modules '("biosdisk" "part_msdos" "fat" "ext2"))
-             (grub-bios-setup
-              (string-append bootloader "/sbin/grub-bios-setup"))
-             (root-device (format #f "hd0,msdos~a" root-index))
-             (boot-img (string-append bootloader "/lib/grub/" arch "/boot.img"))
-             (device-map "device.map"))
+  (with-imported-modules '((guix build utils))
+    #~(lambda (bootloader root-index image)
+        (use-modules (guix build utils))
+        ;; Install GRUB on the given IMAGE. The root partition index is
+        ;; ROOT-INDEX.
+        (let* ((arch (cond ((target-x86?) "i386-pc")
+                           ((target-arm?) "arm64-efi")) )
+               (grub-mkimage
+                (string-append bootloader "/bin/grub-mkimage"))
+               (modules '("biosdisk" "part_msdos" "fat" "ext2"))
+               (grub-bios-setup
+                (string-append bootloader "/sbin/grub-bios-setup"))
+               (root-device (format #f "hd0,msdos~a" root-index))
+               (boot-img (string-append bootloader "/lib/grub/" arch "/boot.img"))
+               (device-map "device.map"))
 
-        ;; Create a minimal, standalone GRUB image that will be written
-        ;; directly in the MBR-GAP (space between the end of the MBR and the
-        ;; first partition).
-        (apply invoke grub-mkimage
-               "-O" arch
-               "-o" "core.img"
-               "-p" (format #f "(~a)/boot/grub" root-device)
-               modules)
+          ;; Create a minimal, standalone GRUB image that will be written
+          ;; directly in the MBR-GAP (space between the end of the MBR and the
+          ;; first partition).
+          (apply invoke grub-mkimage
+                 "-O" arch
+                 "-o" "core.img"
+                 "-p" (format #f "(~a)/boot/grub" root-device)
+                 modules)
 
-        ;; Create a device mapping file.
-        (call-with-output-file device-map
-          (lambda (port)
-            (format port "(hd0) ~a~%" image)))
+          ;; Create a device mapping file.
+          (call-with-output-file device-map
+            (lambda (port)
+              (format port "(hd0) ~a~%" image)))
 
-        ;; Copy the default boot.img, that will be written on the MBR sector
-        ;; by GRUB-BIOS-SETUP.
-        (copy-file boot-img "boot.img")
+          ;; Copy the default boot.img, that will be written on the MBR sector
+          ;; by GRUB-BIOS-SETUP.
+          (copy-file boot-img "boot.img")
 
-        ;; Install both the "boot.img" and the "core.img" files on the given
-        ;; IMAGE. On boot, the MBR sector will execute the minimal GRUB
-        ;; written in the MBR-GAP. GRUB configuration and missing modules will
-        ;; be read from ROOT-DEVICE.
-        (invoke grub-bios-setup
-                "-m" device-map
-                "-r" root-device
-                "-d" "."
-                image))))
+          ;; Install both the "boot.img" and the "core.img" files on the given
+          ;; IMAGE. On boot, the MBR sector will execute the minimal GRUB
+          ;; written in the MBR-GAP. GRUB configuration and missing modules will
+          ;; be read from ROOT-DEVICE.
+          (invoke grub-bios-setup
+                  "-m" device-map
+                  "-r" root-device
+                  "-d" "."
+                  image)))))
 
 (define install-grub-efi
   #~(lambda (bootloader efi-dir mount-point)
