@@ -56,7 +56,7 @@
              #t)))
        #:configure-flags
        '(,@(match (%current-system)
-             ((or "i686-linux" "x86_64-linux")
+             ((or "aarch64-linux" "i686-linux" "x86_64-linux")
               '())
              ("powerpc-linux"
               (list "--disable-thp" "CPPFLAGS=-maltivec"))
