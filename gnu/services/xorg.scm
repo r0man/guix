@@ -358,6 +358,21 @@ in @var{modules}."
                                  files)
                        #t))))
 
+(define (xorg-configuration-append-input config input default-input path)
+  (let ((server (xorg-configuration-server config)))
+    (file-append (or (lookup-package-direct-input server input) default-input)
+                 path)))
+
+(define (xorg-configuration-dri-driver-path config)
+  (xorg-configuration-append-input config "mesa" mesa "/lib/dri"))
+
+(define (xorg-configuration-xkb-bin-dir config)
+  (xorg-configuration-append-input config "xkbcomp" xkbcomp "/bin"))
+
+(define (xorg-configuration-xkb-dir config)
+  (xorg-configuration-append-input config "xkeyboard-config"
+                                   xkeyboard-config "/share/X11/xkb"))
+
 (define* (xorg-wrapper #:optional (config (xorg-configuration)))
   "Return a derivation that builds a script to start the X server with the
 given @var{config}.  The resulting script should be used in place of
@@ -365,12 +380,13 @@ given @var{config}.  The resulting script should be used in place of
   (define exp
     ;; Write a small wrapper around the X server.
     #~(begin
-        (setenv "XORG_DRI_DRIVER_PATH" (string-append #$mesa "/lib/dri"))
-        (setenv "XKB_BINDIR" (string-append #$xkbcomp "/bin"))
+        (setenv "XORG_DRI_DRIVER_PATH"
+                #$(xorg-configuration-dri-driver-path config))
+        (setenv "XKB_BINDIR" #$(xorg-configuration-xkb-bin-dir config))
 
         (let ((X (string-append #$(xorg-configuration-server config) "/bin/X")))
           (apply execl X X
-                 "-xkbdir" (string-append #$xkeyboard-config "/share/X11/xkb")
+                 "-xkbdir" #$(xorg-configuration-xkb-dir config)
                  "-config" #$(xorg-configuration->file config)
                  "-configdir" #$(xorg-configuration-directory
                                  (xorg-configuration-modules config))
