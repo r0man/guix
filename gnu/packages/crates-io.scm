@@ -29965,6 +29965,24 @@ nor a system allocator.")
         ("rust-serde-derive" ,rust-serde-derive-1)
         ("rust-toml" ,rust-toml-0.5))))))
 
+(define-public rust-lexopt-0.3
+  (package
+    (name "rust-lexopt")
+    (version "0.3.0")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "lexopt" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "00dlvik2ygw8z101vf3bfndcvxhp92v25sbzz6bdiwvxgxhlpzxs"))))
+    (build-system cargo-build-system)
+    (home-page "https://github.com/blyxxyz/lexopt")
+    (synopsis "Minimalist pedantic command line parser")
+    (description "This package provides a minimalist pedantic command line
+parser in Rust.")
+    (license license:expat)))
+
 (define-public rust-lexopt-0.2
   (package
     (name "rust-lexopt")
