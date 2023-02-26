@@ -69442,6 +69442,39 @@ windows crate.")
                (base32
                 "17z8q25pd3dp6b84qm9nlayd3ym78sbryxlqmgcxvz9vpmy8qarz"))))))
 
+(define-public rust-winnow-0.3
+  (package
+    (name "rust-winnow")
+    (version "0.3.3")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "winnow" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "0n1n23alds8n0xxxpwnmsdpz485yk455rl5l7dfsrdgqp2br9w7s"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs (("rust-anstyle" ,rust-anstyle-0.2)
+                       ("rust-concolor" ,rust-concolor-0.0.8)
+                       ("rust-is-terminal" ,rust-is-terminal-0.4)
+                       ("rust-memchr" ,rust-memchr-2)
+                       ("rust-terminal-size" ,rust-terminal-size-0.2))
+       #:cargo-development-inputs (("rust-circular" ,rust-circular-0.3)
+                                   ("rust-criterion" ,rust-criterion-0.3)
+                                   ("rust-doc-comment" ,rust-doc-comment-0.3)
+                                   ("rust-escargot" ,rust-escargot-0.5)
+                                   ("rust-lexopt" ,rust-lexopt-0.3)
+                                   ("rust-proptest" ,rust-proptest-1)
+                                   ("rust-snapbox" ,rust-snapbox-0.4)
+                                   ("rust-term-transcript" ,rust-term-transcript-0.2))))
+    (home-page "https://github.com/winnow-rs/winnow")
+    (synopsis "A byte-oriented, zero-copy, parser combinators library")
+    (description
+     "This package provides a byte-oriented, zero-copy, parser combinators
+library.")
+    (license license:expat)))
+
 (define-public rust-xmltree-0.10
   (package
     (name "rust-xmltree")
