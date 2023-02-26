@@ -25543,6 +25543,29 @@ consistent, and reasonably well performing.")
        #:cargo-inputs
        (("rust-unicode-segmentation" ,rust-unicode-segmentation-1))))))
 
+(define-public rust-hermit-abi-0.3
+  (package
+    (name "rust-hermit-abi")
+    (version "0.3.1")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "hermit-abi" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "11j2v3q58kmi5mhjvh6hfrb7il2yzg7gmdf5lpwnwwv6qj04im7y"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs (("rust-compiler-builtins" ,rust-compiler-builtins-0.1)
+                       ("rust-rustc-std-workspace-alloc" ,rust-rustc-std-workspace-alloc-1)
+                       ("rust-rustc-std-workspace-core" ,rust-rustc-std-workspace-core-1))))
+    (home-page "https://github.com/hermitcore/rusty-hermit")
+    (synopsis "Small interface to call functions from RustyHermit")
+    (description
+     "Hermit-abi is small interface to call functions from the unikernel RustyHermit.
+It is used to build the target x86_64-unknown-hermit.")
+    (license (list license:expat license:asl2.0))))
+
 (define-public rust-hermit-abi-0.1
   (package
     (name "rust-hermit-abi")
