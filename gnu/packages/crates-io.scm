@@ -28177,6 +28177,32 @@ network configuration for Windows.")
 enum like Option/Result.")
     (license license:expat)))
 
+(define-public rust-is-terminal-0.4
+  (package
+    (name "rust-is-terminal")
+    (version "0.4.4")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "is-terminal" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "0mqqjb9z59gdbm280yq1h46h8xk40952x58fp5lqwfj1fqjv7di1"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs (("rust-hermit-abi" ,rust-hermit-abi-0.3)
+                       ("rust-io-lifetimes" ,rust-io-lifetimes-1)
+                       ("rust-rustix" ,rust-rustix-0.36)
+                       ("rust-windows-sys" ,rust-windows-sys-0.45))
+       #:cargo-development-inputs (("rust-atty" ,rust-atty-0.2)
+                                   ("rust-libc" ,rust-libc-0.2)
+                                   ("rust-tempfile" ,rust-tempfile-3))))
+    (home-page "https://github.com/sunfishcode/is-terminal")
+    (synopsis "Test whether a given stream is a terminal")
+    (description "This package is a simple utility that answers one question:
+Is this a terminal?")
+    (license license:expat)))
+
 (define-public rust-isahc-0.9
   (package
     (name "rust-isahc")
