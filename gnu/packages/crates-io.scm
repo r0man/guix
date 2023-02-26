@@ -20743,6 +20743,32 @@ Atom, RSS 2.0, RSS 1.0, RSS 0.x and JSON Feed")
 @code{fiat-crypto} libraries.")
     (license (list license:expat license:asl2.0))))
 
+(define-public rust-filedescriptor-0.8
+  (package
+    (name "rust-filedescriptor")
+    (version "0.8.2")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "filedescriptor" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "0vplyh0cw35kzq7smmp2ablq0zsknk5rkvvrywqsqfrchmjxk6bi"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs (("rust-libc" ,rust-libc-0.2)
+                       ("rust-thiserror" ,rust-thiserror-1)
+                       ("rust-winapi" ,rust-winapi-0.3))))
+    (home-page "https://github.com/wez/wezterm")
+    (synopsis "More ergonomic wrappers around RawFd and RawHandle")
+    (description "The purpose of this crate is to make it a bit more ergonomic
+for portable applications that need to work with the platform level RawFd and
+RawHandle types.  Rather than conditionally using RawFd and RawHandle, the
+FileDescriptor type can be used to manage ownership, duplicate, read and
+write.")
+    (license license:expat)))
+
 (define-public rust-filesize-0.2
   (package
     (name "rust-filesize")
