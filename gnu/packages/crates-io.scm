@@ -52545,6 +52545,28 @@ serial port types that work with generic code.")
 for Unix operating systems.")
     (license license:expat)))
 
+(define-public rust-serial-windows-0.4
+  (package
+    (name "rust-serial-windows")
+    (version "0.4.0")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "serial-windows" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "0ql1vjy57g2jf218bhmgr98i41faq0v5vzdx3g9payi6fsvx7ihm"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs (("rust-libc" ,rust-libc-0.2)
+                       ("rust-serial-core" ,rust-serial-core-0.4))))
+    (home-page "https://github.com/dcuddeback/serial-rs")
+    (synopsis "Serial port implementation for Windows.")
+    (description "The serial-windows crate provides a serial port
+implementation for the Windows operating system.")
+    (license license:expat)))
+
 (define-public rust-serial-test-0.6
   (package
     (name "rust-serial-test")
