@@ -69290,6 +69290,32 @@ crate.")
 crate.")
     (license (list license:expat license:asl2.0))))
 
+(define-public rust-windows-targets-0.42
+  (package
+    (name "rust-windows-targets")
+    (version "0.42.1")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "windows-targets" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "1rwh2d1yvfjvlfidi8p9ha4lp34lb0lynynlhk65ikdz3x4j49cf"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs (("rust-windows-aarch64-gnullvm" ,rust-windows-aarch64-gnullvm-0.42)
+                       ("rust-windows-aarch64-msvc" ,rust-windows-aarch64-msvc-0.42)
+                       ("rust-windows-i686-gnu" ,rust-windows-i686-gnu-0.42)
+                       ("rust-windows-i686-msvc" ,rust-windows-i686-msvc-0.42)
+                       ("rust-windows-x86-64-gnu" ,rust-windows-x86-64-gnu-0.42)
+                       ("rust-windows-x86-64-gnullvm" ,rust-windows-x86-64-gnullvm-0.42)
+                       ("rust-windows-x86-64-msvc" ,rust-windows-x86-64-msvc-0.42))))
+    (home-page "https://github.com/microsoft/windows-rs")
+    (synopsis "Code gen support for the windows crate")
+    (description "The windows-targets crate generates code to call any Windows
+API past, present, and future.")
+    (license (list license:expat license:asl2.0))))
+
 (define-public rust-windows-sys-0.42
   (package
     (name "rust-windows-sys")
