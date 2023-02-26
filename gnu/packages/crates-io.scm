@@ -28170,6 +28170,27 @@ library.")
     (license (list license:asl2.0
                    license:expat))))
 
+(define-public rust-ioctl-rs-0.1
+  (package
+    (name "rust-ioctl-rs")
+    (version "0.1.6")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "ioctl-rs" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "0zdrgqxblrwm4ym8pwrr7a4dwjzxrvr1k0qjx6rk1vjwi480b5zp"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs (("rust-libc" ,rust-libc-0.2))))
+    (home-page "https://github.com/dcuddeback/ioctl-rs")
+    (synopsis "Rust bindings for system ioctls.")
+    (description "The ioctl-rs crate provides raw definitions as well as safe
+bindings for system ioctl calls on Unix operating systems.")
+    (license license:expat)))
+
 (define-public rust-iovec-0.1
   (package
     (name "rust-iovec")
