@@ -2702,6 +2702,24 @@ it outputs messages to Android's logcat.")
 escape codes.")
     (license license:mpl2.0)))
 
+(define-public rust-anstyle-0.2
+  (package
+    (name "rust-anstyle")
+    (version "0.2.5")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "anstyle" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "1dvdy7ndv5ycg2486cqlfvzvgz17jfs61k9dwd0iq17y8k4hxfsq"))))
+    (build-system cargo-build-system)
+    (home-page "https://docs.rs/anstyle/latest/anstyle/")
+    (synopsis "ANSI text styling")
+    (description "This package provides core types describing ANSI styling
+escape codes for interoperability between crates.")
+    (license (list license:expat license:asl2.0))))
+
 (define-public rust-antidote-1
   (package
     (name "rust-antidote")
