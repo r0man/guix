@@ -709,7 +709,7 @@ rasterisation.")
 (define-public libdrm
   (package
     (name "libdrm")
-    (version "2.4.107")
+    (version "2.4.114")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -717,16 +717,16 @@ rasterisation.")
                     version ".tar.xz"))
               (sha256
                (base32
-                "127qf1rzhaf13vdd75a58v5q34617hvangjlfnlkcdh37gqcwm65"))))
+                "09nhk3jx3qzggl5vyii3yh4zm0npjqsbxhzvxrg2xla77a2cyj9h"))))
     (build-system meson-build-system)
     (arguments
      `(#:configure-flags
        '(,@(match (%current-system)
              ((or "armhf-linux" "aarch64-linux")
-              '("-Dexynos=true"
-                "-Domap=true"
-                "-Detnaviv=true"
-                "-Dtegra=true"
+              '("-Dexynos=enabled"
+                "-Domap=enabled"
+                "-Detnaviv=enabled"
+                "-Dtegra=enabled"
                 "-Dfreedreno-kgsl=true"))
              (_ '())))
 
