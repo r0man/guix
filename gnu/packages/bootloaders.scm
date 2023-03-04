@@ -640,18 +640,19 @@ tree binary files.  These are board description files used by Linux and BSD.")
       (build-system gnu-build-system)
       (supported-systems (list "aarch64-linux"))
       (arguments
-       `(#:phases
-         (modify-phases %standard-phases
-           (replace 'configure
-             (lambda _
-               (setenv "RELEASE" "1")))
-           (replace 'install
-             (lambda* (#:key outputs #:allow-other-keys)
-               (let ((dir (string-append (assoc-ref outputs "out") "/libexec/")))
-                 (mkdir-p dir)
-                 (copy-file "build/m1n1.bin" (string-append dir "m1n1.bin")))))
-           ;; There are no tests
-           (delete 'check))))
+       (list
+        #:phases
+        #~(modify-phases %standard-phases
+            (replace 'configure
+              (lambda _
+                (setenv "RELEASE" "1")))
+            (replace 'install
+              (lambda* (#:key outputs #:allow-other-keys)
+                (let ((dir (string-append (assoc-ref outputs "out") "/libexec/")))
+                  (mkdir-p dir)
+                  (copy-file "build/m1n1.bin" (string-append dir "m1n1.bin")))))
+            ;; There are no tests
+            (delete 'check))))
       (home-page "https://github.com/AsahiLinux/m1n1")
       (synopsis "Boot loader and experimentation playground for Apple Silicon")
       (description "m1n1 is the bootloader developed by the Asahi Linux project to bridge
