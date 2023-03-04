@@ -663,6 +663,19 @@ glxdemo, glxgears, glxheads, and glxinfo.")
        ("wayland-protocols" ,wayland-protocols-next)
        ,@(fold alist-delete (package-inputs mesa)
                '("llvm" "wayland-protocols"))))))
+
+(define-public asahi-mesa-headers
+  (package/inherit mesa-headers
+    (name "asahi-mesa-headers")
+    (version "20221229")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://gitlab.freedesktop.org/asahi/mesa/-/archive/"
+                           "asahi-" version "/mesa-asahi-" version ".tar.gz"))
+       (sha256
+        (base32 "1gg0msrx2d2mgif4jqljns8nqf29nazqpxcxmjaa50yf50n6n05p"))))))
+
 (define-public glew
   (package
     (name "glew")
