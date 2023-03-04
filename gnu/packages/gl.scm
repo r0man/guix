@@ -680,8 +680,8 @@ glxdemo, glxgears, glxheads, and glxinfo.")
        (sha256 (base32 "1hdaf7pnh5h4f16pzrxqw3g5s37r5dkimsy46pv316phh05dz8nf"))))
     (build-system meson-build-system)
     (inputs
-     `(("mesa" ,asahi-mesa)
-       ,@(fold alist-delete (package-inputs mesa-utils) '("mesa"))))))
+     (modify-inputs (package-inputs mesa-utils)
+       (replace "mesa" asahi-mesa)))))
 
 (define-public glew
   (package
