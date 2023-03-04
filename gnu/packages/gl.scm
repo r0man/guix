@@ -670,14 +670,8 @@ glxdemo, glxgears, glxheads, and glxinfo.")
 (define-public asahi-mesa-headers
   (package/inherit mesa-headers
     (name "asahi-mesa-headers")
-    (version "20221229")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append "https://gitlab.freedesktop.org/asahi/mesa/-/archive/"
-                           "asahi-" version "/mesa-asahi-" version ".tar.gz"))
-       (sha256
-        (base32 "1gg0msrx2d2mgif4jqljns8nqf29nazqpxcxmjaa50yf50n6n05p"))))))
+    (version (package-version asahi-mesa))
+    (source (package-source asahi-mesa))))
 
 (define-public asahi-mesa-utils
   (package/inherit mesa-utils
