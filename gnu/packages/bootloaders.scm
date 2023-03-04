@@ -1043,6 +1043,7 @@ removed so that it fits within common partitioning schemes.")))
          (uri (git-reference
                (url "https://github.com/AsahiLinux/u-boot")
                (commit commit)))
+         (file-name (git-file-name (package-name base) version))
          (sha256
           (base32 "1m1w6ajzsfpb59abncz3sa9b1waqjsnh2vm7js2n22xiw4km7nzx"))))
       (arguments
