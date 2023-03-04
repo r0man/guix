@@ -623,6 +623,42 @@ The SUBDIR argument defaults to \"efi/Guix\", as it is also the case for
 tree binary files.  These are board description files used by Linux and BSD.")
     (license license:gpl2+)))
 
+(define-public m1n1
+  (let ((commit "46f2811351806aafb3d56e02c107f95ac2ea85e3"))
+    (package
+      (name "m1n1")
+      (version (git-version "1.2.4" "0" commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/AsahiLinux/m1n1")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "14chrqbs57v6i5vmf643svbi3s7h4fxrxly0bby7brf3w114nmpk"))))
+      (build-system gnu-build-system)
+      (supported-systems (list "aarch64-linux"))
+      (arguments
+       (list
+        #:phases
+        #~(modify-phases %standard-phases
+            (replace 'configure
+              (lambda _
+                (setenv "RELEASE" "1")))
+            (replace 'install
+              (lambda* (#:key outputs #:allow-other-keys)
+                (let ((dir (string-append (assoc-ref outputs "out") "/libexec/")))
+                  (mkdir-p dir)
+                  (copy-file "build/m1n1.bin" (string-append dir "m1n1.bin")))))
+            ;; There are no tests
+            (delete 'check))))
+      (home-page "https://github.com/AsahiLinux/m1n1")
+      (synopsis "Boot loader and experimentation playground for Apple Silicon")
+      (description "m1n1 is the bootloader developed by the Asahi Linux project to bridge
+the Apple (XNU) boot ecosystem to the Linux boot ecosystem.")
+      (license license:expat))))
+
 (define %u-boot-rockchip-inno-usb-patch
   ;; Fix regression in 2020.10 causing freezes on boot with USB boot enabled.
   ;; See https://gitlab.manjaro.org/manjaro-arm/packages/core/uboot-rockpro64/-/issues/4
