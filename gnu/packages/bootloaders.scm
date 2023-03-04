@@ -1052,8 +1052,8 @@ removed so that it fits within common partitioning schemes.")))
           #~(modify-phases #$phases
               (delete 'disable-tools-libcrypto)))))
       (native-inputs
-       `(("openssl" ,libressl)
-         ,@(package-native-inputs base))))))
+       (modify-inputs (package-native-inputs base)
+         (prepend libressl))))))
 
 (define*-public (make-u-boot-sunxi64-package board triplet
                                              #:key defconfig configs)
