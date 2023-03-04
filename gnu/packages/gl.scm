@@ -676,6 +676,21 @@ glxdemo, glxgears, glxheads, and glxinfo.")
        (sha256
         (base32 "1gg0msrx2d2mgif4jqljns8nqf29nazqpxcxmjaa50yf50n6n05p"))))))
 
+(define-public asahi-mesa-utils
+  (package/inherit mesa-utils
+    (name "asahi-mesa-utils")
+    (version "8.5.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://archive.mesa3d.org/demos/" version
+                           "/mesa-demos-" version ".tar.bz2"))
+       (sha256 (base32 "1hdaf7pnh5h4f16pzrxqw3g5s37r5dkimsy46pv316phh05dz8nf"))))
+    (build-system meson-build-system)
+    (inputs
+     `(("mesa" ,asahi-mesa)
+       ,@(fold alist-delete (package-inputs mesa-utils) '("mesa"))))))
+
 (define-public glew
   (package
     (name "glew")
