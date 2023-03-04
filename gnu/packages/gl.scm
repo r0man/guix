@@ -662,6 +662,12 @@ glxdemo, glxgears, glxheads, and glxinfo.")
          (replace "llvm" llvm-15)
          (replace "wayland-protocols" wayland-protocols-next))))))
 
+(define-public asahi-mesa-headers
+  (package/inherit mesa-headers
+    (name "asahi-mesa-headers")
+    (version (package-version asahi-mesa))
+    (source (package-source asahi-mesa))))
+
 (define-public glew
   (package
     (name "glew")
