@@ -91,14 +91,14 @@
                (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "1kj9ycy3f34fzm9bnirlcw9zm2sgipwrqzphdg5k099rbjbc7zmj"))))
+          (base32 "1kj9ycy3f34fzm9bnirlcw9zm2sgipwrqzphdg5k099rbjbc7zmj"))
+         (modules '((guix build utils)))
+         (snippet
+          '(delete-file-recursively "vendor"))))
       (build-system python-build-system)
       (arguments
        `(#:phases
          (modify-phases %standard-phases
-           (add-after 'unpack 'remove-vendor
-             (lambda* (#:key outputs #:allow-other-keys)
-               (delete-file-recursively "vendor")))
            (add-after 'install 'wrap-program
              (lambda* (#:key inputs outputs #:allow-other-keys)
                (let ((out (assoc-ref outputs "out")))
