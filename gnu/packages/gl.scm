@@ -52,6 +52,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages tls)
+  #:use-module (gnu packages valgrind)
   #:use-module (gnu packages video)
   #:use-module (gnu packages vulkan)
   #:use-module (gnu packages xdisorg)
@@ -612,6 +613,56 @@ glxdemo, glxgears, glxheads, and glxinfo.")
     ;; glxdemo is public domain; others expat.
     (license (list license:expat license:public-domain))))
 
+(define-public asahi-mesa
+  (package
+    (inherit mesa)
+    (name "asahi-mesa")
+    (version "20221229")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://gitlab.freedesktop.org/asahi/mesa/-/archive/"
+                           "asahi-" version "/mesa-asahi-" version ".tar.gz"))
+       (sha256
+        (base32 "1gg0msrx2d2mgif4jqljns8nqf29nazqpxcxmjaa50yf50n6n05p"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments mesa)
+       ((#:configure-flags flags)
+        `(list "-Db_ndebug=true"
+               "-Db_lto=false"
+               "-Ddri3=enabled"
+               "-Degl=enabled"
+               "-Dgallium-drivers=swrast,virgl,kmsro,asahi"
+               "-Dgallium-extra-hud=true"
+               "-Dgallium-opencl=disabled"
+               "-Dgallium-rusticl=false"
+               "-Dgallium-va=disabled"
+               "-Dgallium-vdpau=disabled"
+               "-Dgallium-xa=disabled"
+               "-Dgbm=enabled"
+               "-Dgles1=disabled"
+               "-Dgles2=enabled"
+               "-Dglx=dri"
+               "-Dlibunwind=disabled"
+               "-Dllvm=enabled"
+               "-Dlmsensors=enabled"
+               "-Dmicrosoft-clc=disabled"
+               "-Dosmesa=true"
+               "-Dplatforms=x11,wayland"
+               "-Dshared-glapi=enabled"
+               "-Dvalgrind=enabled"
+               "-Dvulkan-drivers=swrast"
+               "-Dvulkan-layers="))))
+    (inputs
+     `(("libdrm" ,libdrm)
+       ("libglvnd" ,libglvnd)
+       ("llvm" ,llvm-15)
+       ("lm-sensors" ,lm-sensors "lib")
+       ("openssl" ,libressl)
+       ("valgrind" ,valgrind)
+       ("wayland-protocols" ,wayland-protocols-next)
+       ,@(fold alist-delete (package-inputs mesa)
+               '("llvm" "wayland-protocols"))))))
 (define-public glew
   (package
     (name "glew")
