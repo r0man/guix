@@ -79,38 +79,39 @@
   #:use-module (ice-9 match))
 
 (define-public asahi-fwextract
-  (package
-    (name "asahi-fwextract")
-    (version "0.5.3")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/AsahiLinux/asahi-installer")
-             (commit (string-append "v" version))))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "1kj9ycy3f34fzm9bnirlcw9zm2sgipwrqzphdg5k099rbjbc7zmj"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'remove-vendor
-           (lambda* (#:key outputs #:allow-other-keys)
-             (delete-file-recursively "vendor")))
-         (add-after 'install 'wrap-program
-           (lambda* (#:key inputs outputs #:allow-other-keys)
-             (let ((out (assoc-ref outputs "out")))
-               (wrap-program (string-append out "/bin/asahi-fwextract")
-                 `("LD_LIBRARY_PATH" ":" prefix
-                   (,(string-append (assoc-ref inputs "lzfse") "/lib"))))))))))
-    (inputs (list lzfse))
-    (home-page "https://github.com/AsahiLinux/asahi-installer")
-    (synopsis "Asahi Linux firmware extractor")
-    (description "The Asahi Linux firmware extractor transform the firmware archive
+  (let ((commit "0ac64c9ce1c460f4576162a82d239d7e8688a79e"))
+    (package
+      (name "asahi-fwextract")
+      (version (git-version "0.5.3" "0" commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/AsahiLinux/asahi-installer")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "1kj9ycy3f34fzm9bnirlcw9zm2sgipwrqzphdg5k099rbjbc7zmj"))))
+      (build-system python-build-system)
+      (arguments
+       `(#:phases
+         (modify-phases %standard-phases
+           (add-after 'unpack 'remove-vendor
+             (lambda* (#:key outputs #:allow-other-keys)
+               (delete-file-recursively "vendor")))
+           (add-after 'install 'wrap-program
+             (lambda* (#:key inputs outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 (wrap-program (string-append out "/bin/asahi-fwextract")
+                   `("LD_LIBRARY_PATH" ":" prefix
+                     (,(string-append (assoc-ref inputs "lzfse") "/lib"))))))))))
+      (inputs (list lzfse))
+      (home-page "https://github.com/AsahiLinux/asahi-installer")
+      (synopsis "Asahi Linux firmware extractor")
+      (description "The Asahi Linux firmware extractor transform the firmware archive
 provided by the Asahi Linux installer into a manifest and CPIO and TAR
 archives that are compatible with the Linux kernel.")
-    (license license:expat)))
+      (license license:expat))))
 
 (define-public ath9k-htc-firmware
   (package
