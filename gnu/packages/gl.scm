@@ -657,15 +657,10 @@ glxdemo, glxgears, glxheads, and glxinfo.")
                  "-Dvulkan-drivers=swrast"
                  "-Dvulkan-layers="))))
       (inputs
-       `(("libdrm" ,libdrm)
-         ("libglvnd" ,libglvnd)
-         ("llvm" ,llvm-15)
-         ("lm-sensors" ,lm-sensors "lib")
-         ("openssl" ,libressl)
-         ("valgrind" ,valgrind)
-         ("wayland-protocols" ,wayland-protocols-next)
-         ,@(fold alist-delete (package-inputs mesa)
-                 '("llvm" "wayland-protocols")))))))
+       (modify-inputs (package-inputs mesa)
+         (prepend `(,lm-sensors "lib") libglvnd libressl valgrind)
+         (replace "llvm" llvm-15)
+         (replace "wayland-protocols" wayland-protocols-next))))))
 
 (define-public asahi-mesa-headers
   (package/inherit mesa-headers
