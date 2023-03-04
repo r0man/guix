@@ -97,14 +97,15 @@
           '(delete-file-recursively "vendor"))))
       (build-system python-build-system)
       (arguments
-       `(#:phases
-         (modify-phases %standard-phases
-           (add-after 'install 'wrap-program
-             (lambda* (#:key inputs outputs #:allow-other-keys)
-               (let ((out (assoc-ref outputs "out")))
-                 (wrap-program (string-append out "/bin/asahi-fwextract")
-                   `("LD_LIBRARY_PATH" ":" prefix
-                     (,(string-append (assoc-ref inputs "lzfse") "/lib"))))))))))
+       (list
+        #:phases
+        #~(modify-phases %standard-phases
+            (add-after 'install 'wrap-program
+              (lambda* (#:key inputs outputs #:allow-other-keys)
+                (let ((out (assoc-ref outputs "out")))
+                  (wrap-program (string-append out "/bin/asahi-fwextract")
+                    `("LD_LIBRARY_PATH" ":" prefix
+                      (,(string-append (assoc-ref inputs "lzfse") "/lib"))))))))))
       (inputs (list lzfse))
       (home-page "https://github.com/AsahiLinux/asahi-installer")
       (synopsis "Asahi Linux firmware extractor")
