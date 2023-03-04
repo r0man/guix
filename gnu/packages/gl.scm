@@ -668,6 +668,21 @@ glxdemo, glxgears, glxheads, and glxinfo.")
     (version (package-version asahi-mesa))
     (source (package-source asahi-mesa))))
 
+(define-public asahi-mesa-utils
+  (package/inherit mesa-utils
+    (name "asahi-mesa-utils")
+    (version "8.5.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://archive.mesa3d.org/demos/" version
+                           "/mesa-demos-" version ".tar.bz2"))
+       (sha256 (base32 "1hdaf7pnh5h4f16pzrxqw3g5s37r5dkimsy46pv316phh05dz8nf"))))
+    (build-system meson-build-system)
+    (inputs
+     (modify-inputs (package-inputs mesa-utils)
+       (replace "mesa" asahi-mesa)))))
+
 (define-public glew
   (package
     (name "glew")
