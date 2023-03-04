@@ -1032,6 +1032,30 @@ removed so that it fits within common partitioning schemes.")))
 (define-public u-boot-am335x-evm
   (make-u-boot-package "am335x_evm" "arm-linux-gnueabihf"))
 
+(define-public u-boot-apple-m1
+  (let ((base (make-u-boot-package "apple_m1" "aarch64-linux-gnu"))
+        (commit "54409548c3aa8cf4820f1bda69a26bb603a0a5a4"))
+    (package
+      (inherit base)
+      (version (git-version "2022.10-1" "0" commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/AsahiLinux/u-boot")
+               (commit commit)))
+         (file-name (git-file-name (package-name base) version))
+         (sha256
+          (base32 "1m1w6ajzsfpb59abncz3sa9b1waqjsnh2vm7js2n22xiw4km7nzx"))))
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:phases phases '%standard-phases)
+          #~(modify-phases #$phases
+              (delete 'disable-tools-libcrypto)))))
+      (native-inputs
+       (modify-inputs (package-native-inputs base)
+         (prepend libressl))))))
+
 (define*-public (make-u-boot-sunxi64-package board triplet
                                              #:key defconfig configs)
   (let ((base (make-u-boot-package
