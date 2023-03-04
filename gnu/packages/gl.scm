@@ -52,6 +52,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages tls)
+  #:use-module (gnu packages valgrind)
   #:use-module (gnu packages video)
   #:use-module (gnu packages vulkan)
   #:use-module (gnu packages xdisorg)
@@ -611,6 +612,55 @@ from software emulation to complete hardware acceleration for modern GPUs.")
 glxdemo, glxgears, glxheads, and glxinfo.")
     ;; glxdemo is public domain; others expat.
     (license (list license:expat license:public-domain))))
+
+(define-public asahi-mesa
+  (let ((commit "0a12b60a6b4363315ca3789e7e289240704a26da"))
+    (package
+      (inherit mesa)
+      (name "asahi-mesa")
+      (version (git-version "20221229" "0" commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://gitlab.freedesktop.org/asahi/mesa")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "0yjn55qy4890gi1s3dhzdhqqxrms4fzcibqr84a3vcc53ggiywmb"))))
+      (arguments
+       (substitute-keyword-arguments (package-arguments mesa)
+         ((#:configure-flags flags)
+          `(list "-Db_ndebug=true"
+                 "-Db_lto=false"
+                 "-Ddri3=enabled"
+                 "-Degl=enabled"
+                 "-Dgallium-drivers=swrast,virgl,kmsro,asahi"
+                 "-Dgallium-extra-hud=true"
+                 "-Dgallium-opencl=disabled"
+                 "-Dgallium-rusticl=false"
+                 "-Dgallium-va=disabled"
+                 "-Dgallium-vdpau=disabled"
+                 "-Dgallium-xa=disabled"
+                 "-Dgbm=enabled"
+                 "-Dgles1=disabled"
+                 "-Dgles2=enabled"
+                 "-Dglx=dri"
+                 "-Dlibunwind=disabled"
+                 "-Dllvm=enabled"
+                 "-Dlmsensors=enabled"
+                 "-Dmicrosoft-clc=disabled"
+                 "-Dosmesa=true"
+                 "-Dplatforms=x11,wayland"
+                 "-Dshared-glapi=enabled"
+                 "-Dvalgrind=enabled"
+                 "-Dvulkan-drivers=swrast"
+                 "-Dvulkan-layers="))))
+      (inputs
+       (modify-inputs (package-inputs mesa)
+         (prepend `(,lm-sensors "lib") libglvnd libressl valgrind)
+         (replace "llvm" llvm-15)
+         (replace "wayland-protocols" wayland-protocols-next))))))
 
 (define-public glew
   (package
