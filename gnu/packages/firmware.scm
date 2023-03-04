@@ -34,7 +34,7 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system meson)
-  #:use-module (guix build-system python)
+  #:use-module (guix build-system pyproject)
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages)
   #:use-module (gnu packages admin)
@@ -94,13 +94,18 @@
           (base32 "1kj9ycy3f34fzm9bnirlcw9zm2sgipwrqzphdg5k099rbjbc7zmj"))
          (modules '((guix build utils)))
          (snippet
-          '(delete-file-recursively "vendor"))))
-      (build-system python-build-system)
+          '(begin
+             (delete-file-recursively "vendor")
+             (with-output-to-file "entry_points.txt"
+               (lambda ()
+                 (format #t "[console_scripts]\n")
+                 (format #t "asahi-fwextract = asahi_firmware.update:main")))))))
+      (build-system pyproject-build-system)
       (arguments
        (list
         #:phases
         #~(modify-phases %standard-phases
-            (add-after 'install 'wrap-program
+            (add-after 'create-entrypoints 'wrap-program
               (lambda* (#:key inputs outputs #:allow-other-keys)
                 (let ((out (assoc-ref outputs "out")))
                   (wrap-program (string-append out "/bin/asahi-fwextract")
