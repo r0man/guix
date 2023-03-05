@@ -1035,8 +1035,7 @@ removed so that it fits within common partitioning schemes.")))
 (define-public u-boot-apple-m1
   (let ((base (make-u-boot-package "apple_m1" "aarch64-linux-gnu"))
         (commit "54409548c3aa8cf4820f1bda69a26bb603a0a5a4"))
-    (package
-      (inherit base)
+    (package/inherit base
       (version (git-version "2022.10-1" "0" commit))
       (source
        (origin
