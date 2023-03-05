@@ -615,8 +615,7 @@ glxdemo, glxgears, glxheads, and glxinfo.")
 
 (define-public asahi-mesa
   (let ((commit "0a12b60a6b4363315ca3789e7e289240704a26da"))
-    (package
-      (inherit mesa)
+    (package/inherit mesa
       (name "asahi-mesa")
       (version (git-version "20221229" "0" commit))
       (source
