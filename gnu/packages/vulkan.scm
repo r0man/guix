@@ -196,6 +196,8 @@ interpretation of the specifications for these languages.")
              (url "https://github.com/KhronosGroup/Vulkan-Headers")
              (commit version)))
        (file-name (git-file-name name version))
+       (patches
+        (search-patches "vulkan-loader-skip-incompatible-tests.patch"))
        (sha256
         (base32
          "167zdank6pn66mzjdwgrdlmhmsy4v2k0nhw0nwg649k863rgi00j"))))
@@ -222,6 +224,8 @@ interpretation of the specifications for these languages.")
              (url "https://github.com/KhronosGroup/Vulkan-Loader")
              (commit "v1.3.232")))
        (file-name (git-file-name name version))
+       (patches
+        (search-patches "vulkan-loader-skip-incompatible-tests.patch"))
        (sha256
         (base32
          "0w69sh669sx9pwlvv2rv92ds2hm2rbzsa6qqcmd8kcad0qfq7dz2"))))

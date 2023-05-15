@@ -1,0 +1,62 @@
+Certain tests that use the pre-built libraries provided in
+tests/framework/data/binaries presume they are running on a 32- or
+64-bit x86 host, as these are the only architectures for which the
+libraries are provided.
+
+Skip these tests on non-x86 platforms where the tests are certain to
+fail.
+
+diff --git a/tests/loader_regression_tests.cpp b/tests/loader_regression_tests.cpp
+index 7390596bd..1b0780c65 100644
+--- a/tests/loader_regression_tests.cpp
++++ b/tests/loader_regression_tests.cpp
+@@ -1014,6 +1014,9 @@ TEST(CreateDevice, ConsecutiveCreateWithoutDestruction) {
+ }
+ 
+ TEST(TryLoadWrongBinaries, WrongICD) {
++#if !defined(__x86_64__) && !defined(__i386__)
++    GTEST_SKIP() << "Skip this test as it is not compatible with this architecture.";
++#endif
+     FrameworkEnvironment env{};
+     env.add_icd(TestICDDetails(TEST_ICD_PATH_VERSION_2));
+     env.add_icd(TestICDDetails(CURRENT_PLATFORM_DUMMY_BINARY_WRONG_TYPE).set_is_fake(true));
+@@ -1041,6 +1044,9 @@ TEST(TryLoadWrongBinaries, WrongICD) {
+ }
+ 
+ TEST(TryLoadWrongBinaries, WrongExplicit) {
++#if !defined(__x86_64__) && !defined(__i386__)
++    GTEST_SKIP() << "Skip this test as it is not compatible with this architecture.";
++#endif
+     FrameworkEnvironment env{};
+     env.add_icd(TestICDDetails(TEST_ICD_PATH_VERSION_2));
+     env.get_test_icd().physical_devices.emplace_back("physical_device_0");
+@@ -1077,6 +1083,9 @@ TEST(TryLoadWrongBinaries, WrongExplicit) {
+ }
+ 
+ TEST(TryLoadWrongBinaries, WrongImplicit) {
++#if !defined(__x86_64__) && !defined(__i386__)
++    GTEST_SKIP() << "Skip this test as it is not compatible with this architecture.";
++#endif
+     FrameworkEnvironment env{};
+     env.add_icd(TestICDDetails(TEST_ICD_PATH_VERSION_2));
+     env.get_test_icd().physical_devices.emplace_back("physical_device_0");
+@@ -1114,6 +1123,9 @@ TEST(TryLoadWrongBinaries, WrongImplicit) {
+ }
+ 
+ TEST(TryLoadWrongBinaries, WrongExplicitAndImplicit) {
++#if !defined(__x86_64__) && !defined(__i386__)
++    GTEST_SKIP() << "Skip this test as it is not compatible with this architecture.";
++#endif
+     FrameworkEnvironment env{};
+     env.add_icd(TestICDDetails(TEST_ICD_PATH_VERSION_2));
+     env.get_test_icd().physical_devices.emplace_back("physical_device_0");
+@@ -1159,6 +1171,9 @@ TEST(TryLoadWrongBinaries, WrongExplicitAndImplicit) {
+ }
+ 
+ TEST(TryLoadWrongBinaries, WrongExplicitAndImplicitErrorOnly) {
++#if !defined(__x86_64__) && !defined(__i386__)
++    GTEST_SKIP() << "Skip this test as it is not compatible with this architecture.";
++#endif
+     FrameworkEnvironment env{};
+     env.add_icd(TestICDDetails(TEST_ICD_PATH_VERSION_2));
+     env.get_test_icd().physical_devices.emplace_back("physical_device_0");

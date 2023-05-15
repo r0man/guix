@@ -2038,6 +2038,7 @@ dist_patch_DATA =						\
   %D%/packages/patches/vtk-7-gcc-10-compat.patch		\
   %D%/packages/patches/vtk-7-hdf5-compat.patch			\
   %D%/packages/patches/vtk-7-python-compat.patch		\
+  %D%/packages/patches/vulkan-loader-skip-incompatible-tests.patch	\
   %D%/packages/patches/wacomtablet-add-missing-includes.patch	\
   %D%/packages/patches/wacomtablet-qt5.15.patch			\
   %D%/packages/patches/warsow-qfusion-fix-bool-return-type.patch	\
