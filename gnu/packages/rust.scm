@@ -297,7 +297,8 @@
              ;; (e.g. when building the 'test' library crate).
              (mkdir-p "/tmp/bin")
              (symlink (which "gcc") "/tmp/bin/cc")
-             (setenv "PATH" (string-append "/tmp/bin:" (getenv "PATH")))))
+             (setenv "PATH" (string-append "/tmp/bin:" (getenv "PATH")))
+             (setenv "JEMALLOC_SYS_WITH_LG_PAGE" "14")))
          (delete 'patch-generated-file-shebangs)
          (replace 'build
            (lambda* (#:key make-flags parallel-build? #:allow-other-keys)
@@ -448,6 +449,7 @@ safety and thread safety guarantees.")
                (setenv "JEMALLOC_OVERRIDE"
                        (search-input-file inputs
                                           "/lib/libjemalloc_pic.a"))
+               (setenv "JEMALLOC_SYS_WITH_LG_PAGE" "14")
                (call-with-output-file "config.toml"
                  (lambda (port)
                    (display (string-append "
