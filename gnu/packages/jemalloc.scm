@@ -65,7 +65,8 @@
                ("powerpc-linux"
                 (list "CPPFLAGS=-maltivec"))
                (_
-                '())))))
+                '()))
+          "--with-lg-page=16")))
     (inputs (list perl))
     ;; Install the scripts to a separate output to avoid referencing Perl and
     ;; Bash in the default output, saving ~75 MiB on the closure.
