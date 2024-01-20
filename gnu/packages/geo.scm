@@ -1207,6 +1207,10 @@ development.")
                   (ice-9 popen))
       #:phases
       #~(modify-phases %standard-phases
+          (add-after 'unpack 'set-JAVA_HOME
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let ((jdk (assoc-ref inputs "jdk")))
+                (setenv "JAVA_HOME" jdk))))
           (add-after 'install 'fix-rpath
             (lambda* (#:key outputs #:allow-other-keys)
               (let ((libdir (string-append (assoc-ref outputs "out") "/lib")))
@@ -1246,9 +1250,11 @@ development.")
            zlib
            zstd))
     (native-inputs
-     (list patchelf
-           pkg-config
-           python))
+     `(("ant" ,ant)
+       ("jdk" ,openjdk11 "jdk")
+       ("patchelf" ,patchelf)
+       ("pkg-config" ,pkg-config)
+       ("python" ,python)))
     (propagated-inputs
      (list python-numpy))
     (home-page "https://gdal.org/")
