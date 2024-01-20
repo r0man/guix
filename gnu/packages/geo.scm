@@ -1172,7 +1172,7 @@ development.")
 (define-public gdal
   (package
     (name "gdal")
-    (version "3.6.1")
+    (version "3.8.3")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -1180,7 +1180,7 @@ development.")
                      version ".tar.gz"))
               (sha256
                (base32
-                "1qckwnygszxkkq40bf87s3m1sab6jj9jyakdvskh0qf7dq8zjarf"))
+                "1sj9l1hjfs5d0mnv71iy8zk2xprn46h8gxq0cai9v7i3m23h78zp"))
               (modules '((guix build utils)))
               (snippet
                 `(begin
@@ -1193,14 +1193,33 @@ development.")
                        "frmts/jpeg/libjpeg12"
                        "frmts/gtiff/libtiff"
                        "frmts/gtiff/libgeotiff"
-                       "frmts/zlib"
                        "ogr/ogrsf_frmts/geojson/libjson"))))))
     (build-system cmake-build-system)
     (arguments
-     `(#:tests? #f
-       #:configure-flags
-       (list "-DGDAL_USE_INTERNAL_LIBS=WHEN_NO_EXTERNAL"
-             "-DGDAL_USE_JPEG12_INTERNAL=OFF")))
+     (list
+      #:tests? #f
+      #:configure-flags
+      #~(list "-DGDAL_USE_INTERNAL_LIBS=WHEN_NO_EXTERNAL"
+              "-DGDAL_USE_JPEG12_INTERNAL=OFF")
+      #:modules '((guix build cmake-build-system)
+                  (guix build utils)
+                  (ice-9 rdelim)
+                  (ice-9 popen))
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'install 'fix-rpath
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((libdir (string-append (assoc-ref outputs "out") "/lib")))
+                (for-each
+                 (lambda (file)
+                   (let* ((pipe (open-pipe* OPEN_READ "patchelf"
+                                            "--print-rpath" file))
+                          (line (read-line pipe)))
+                     (and (zero? (close-pipe pipe))
+                          (invoke "patchelf" "--set-rpath"
+                                  (string-append libdir ":" line)
+                                  file))))
+                 (find-files libdir ".*\\.so$"))))))))
     (inputs
      (list curl
            expat
@@ -1227,7 +1246,8 @@ development.")
            zlib
            zstd))
     (native-inputs
-     (list pkg-config
+     (list patchelf
+           pkg-config
            python))
     (propagated-inputs
      (list python-numpy))
