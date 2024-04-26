@@ -1606,6 +1606,30 @@ on stdout instead of using a socket as the Emacsclient does.")
 libgit2 bindings for Emacs, intended to boost the performance of Magit.")
       (license license:gpl2+))))
 
+(define-public emacs-llm
+  (package
+    (name "emacs-llm")
+    (version "0.13.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/ahyatt/llm")
+                    (commit version)))
+              (file-name (git-file-name name version))
+              (sha256 (base32
+                       "1q7djz4zx1br4d3g46f1m5cbxwl050qjmsm2cy7zcww64rrkcj0l"))))
+    (build-system emacs-build-system)
+    (home-page "https://github.com/ahyatt/llm")
+    (synopsis "Emacs library abstracting Large Language Model capabilities.")
+    (description
+     "This is a library for interfacing with Large Language Models.  It allows
+Elisp code to use LLMs, but gives the end-user an option to choose which LLM
+they would prefer.  This is especially useful for LLMs, since there are ones
+in which API access costs money, as well as locally installed ones that are
+free.  Applications using LLMs can use this library to make sure their
+application works regardless of the LLm they choose.")
+    (license license:gpl3+)))
+
 (define-public emacs-magit
     ;; Use this unreleased commit to benefit from a recent improvements with
     ;; regard to adding git trailers such as "Reviewed-by".
