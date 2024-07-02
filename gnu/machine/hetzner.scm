@@ -67,7 +67,7 @@
 ;;;
 ;;; Code:
 
-(define %api-base "https://api.digitalocean.com")
+(define %api-base "https://api.hetzner.cloud")
 
 (define %hetzner-token
   (make-parameter (getenv "GUIX_HETZNER_TOKEN")))
@@ -147,9 +147,9 @@ string."
   (let ((tags (hetzner-configuration-tags
                (machine-configuration machine))))
     (find (lambda (droplet)
-            (equal? (assoc-ref droplet "tags") (list->vector tags)))
+            (equal? (assoc-ref droplet "labels") (list->vector tags)))
           (vector->list
-           (assoc-ref (fetch-endpoint "/v2/droplets") "droplets")))))
+           (assoc-ref (fetch-endpoint "/v1/servers") "servers")))))
 
 (define (machine-public-ipv4-network machine)
   "Return the public IPv4 network interface of the droplet allocated to
@@ -358,18 +358,32 @@ environment type of 'hetzner-environment-type'."
          (fingerprint (read-key-fingerprint ssh-key))
          (enable-ipv6? (hetzner-configuration-enable-ipv6? config))
          (tags (hetzner-configuration-tags config))
+         ;; (request-body `(("name" . ,name)
+         ;;                 ("region" . ,region)
+         ;;                 ("size" . ,size)
+         ;;                 ("image" . "debian-9-x64")
+         ;;                 ("ssh_keys" . ,(vector fingerprint))
+         ;;                 ("backups" . #f)
+         ;;                 ("ipv6" . ,enable-ipv6?)
+         ;;                 ("user_data" . #nil)
+         ;;                 ("private_networking" . #nil)
+         ;;                 ("volumes" . #nil)
+         ;;                 ("tags" . ,(list->vector tags))))
          (request-body `(("name" . ,name)
-                         ("region" . ,region)
-                         ("size" . ,size)
-                         ("image" . "debian-9-x64")
-                         ("ssh_keys" . ,(vector fingerprint))
-                         ("backups" . #f)
-                         ("ipv6" . ,enable-ipv6?)
-                         ("user_data" . #nil)
-                         ("private_networking" . #nil)
-                         ("volumes" . #nil)
-                         ("tags" . ,(list->vector tags))))
-         (response (post-endpoint "/v2/droplets" request-body)))
+                         ("image" . "ubuntu-20.04")
+                         ("server_type" "CX22")
+                         ;; ("region" . ,region)
+                         ;; ("size" . ,size)
+                         ;; ("image" . "debian-9-x64")
+                         ;; ("ssh_keys" . ,(vector fingerprint))
+                         ;; ("backups" . #f)
+                         ;; ("ipv6" . ,enable-ipv6?)
+                         ;; ("user_data" . #nil)
+                         ;; ("private_networking" . #nil)
+                         ;; ("volumes" . #nil)
+                         ;; ("tags" . ,(list->vector tags))
+                         ))
+         (response (post-endpoint "/v1/servers" request-body)))
     (machine-wait-until-available target)
     (let* ((network (machine-public-ipv4-network target))
            (address (assoc-ref network "ip_address")))
@@ -450,3 +464,6 @@ one procured from https://docs.hetzner.com/cloud/api/getting-started/generating-
 for environment of type '~a'")
                                 config
                                 environment)))))
+
+;; (fetch-endpoint "/v1/images")
+;; (fetch-endpoint "/v1/servers")
