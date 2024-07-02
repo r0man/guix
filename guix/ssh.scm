@@ -103,7 +103,8 @@ actual key does not match."
                            host-key
                            (compression %compression)
                            (timeout 3600)
-                           (connection-timeout 10))
+                           (connection-timeout 10)
+                           (stricthostkeycheck #t))
   "Open an SSH session for HOST and return it.  IDENTITY specifies the file
 name of a private key to use for authenticating with the host.  When USER,
 PORT, or IDENTITY are #f, use default values or whatever '~/.ssh/config'
@@ -137,7 +138,8 @@ Throw an error on failure."
 
                                ;; Speed up RPCs by creating sockets with
                                ;; TCP_NODELAY.
-                               #:nodelay #t)))
+                               #:nodelay #t
+                               #:stricthostkeycheck stricthostkeycheck)))
 
     ;; Honor ~/.ssh/config.
     (session-parse-config! session)
@@ -149,13 +151,14 @@ Throw an error on failure."
            (authenticate-server* session host-key)
 
            ;; Authenticate against ~/.ssh/known_hosts.
-           (match (authenticate-server session)
-             ('ok #f)
-             (reason
-              (raise (formatted-message (G_ "failed to authenticate \
+           (when stricthostkeycheck
+             (match (authenticate-server session)
+               ('ok #f)
+               (reason
+                (raise (formatted-message (G_ "failed to authenticate \
 server at '~a': ~a")
-                                        (session-get session 'host)
-                                        reason)))))
+                                          (session-get session 'host)
+                                          reason))))))
 
        ;; Use public key authentication, via the SSH agent if it's available.
        (match (userauth-public-key/auto! session)
