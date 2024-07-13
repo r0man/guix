@@ -17,17 +17,17 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gnu machine hetzner)
+  #:use-module ((guix diagnostics) #:select (formatted-message))
   #:use-module (gnu machine ssh)
   #:use-module (gnu machine)
-  #:use-module (gnu services)
   #:use-module (gnu services base)
   #:use-module (gnu services networking)
-  #:use-module (gnu system)
+  #:use-module (gnu services)
   #:use-module (gnu system pam)
+  #:use-module (gnu system)
   #:use-module (guix base32)
   #:use-module (guix derivations)
   #:use-module (guix i18n)
-  #:use-module ((guix diagnostics) #:select (formatted-message))
   #:use-module (guix import json)
   #:use-module (guix monads)
   #:use-module (guix records)
@@ -35,7 +35,9 @@
   #:use-module (guix store)
   #:use-module (ice-9 format)
   #:use-module (ice-9 iconv)
+  #:use-module (ice-9 popen)
   #:use-module (ice-9 string-fun)
+  #:use-module (ice-9 textual-ports)
   #:use-module (json)
   #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-1)
@@ -62,15 +64,16 @@
 
 ;;; Commentary:
 ;;;
-;;; This module implements a high-level interface for provisioning "droplets"
-;;; from the Hetzner virtual private server (VPS) service.
+;;; This module implements a high-level interface for provisioning "servers"
+;;; from the Hetzner Cloud service.
 ;;;
 ;;; Code:
 
 (define %api-base "https://api.hetzner.cloud")
+(define %hetzner-token-name "GUIX_HETZNER_TOKEN")
 
 (define %hetzner-token
-  (make-parameter (getenv "GUIX_HETZNER_TOKEN")))
+  (make-parameter (getenv %hetzner-token-name)))
 
 (define* (post-endpoint endpoint body)
   "Encode BODY as JSON and send it to the Hetzner API endpoint
@@ -467,3 +470,4 @@ for environment of type '~a'")
 
 ;; (fetch-endpoint "/v1/images")
 ;; (fetch-endpoint "/v1/servers")
+;; (%hetzner-token)
