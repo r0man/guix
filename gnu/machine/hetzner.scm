@@ -131,11 +131,15 @@ takes care to set headers such as 'Accept' and 'Authorization' appropriately."
   make-hetzner-configuration
   hetzner-configuration?
   this-hetzner-configuration
-  (ssh-key     hetzner-configuration-ssh-key)      ; string
-  (tags        hetzner-configuration-tags)         ; list of strings
-  (region      hetzner-configuration-region)       ; string
-  (size        hetzner-configuration-size)         ; string
-  (enable-ipv6? hetzner-configuration-enable-ipv6?)) ; boolean
+  (region hetzner-configuration-region) ; string
+  (server-type hetzner-configuration-server-type) ; string
+  ;; Digital ocean
+  ;; (ssh-key     hetzner-configuration-ssh-key)      ; string
+  ;; (tags        hetzner-configuration-tags)         ; list of strings
+  ;; (region      hetzner-configuration-region)       ; string
+  ;; (size        hetzner-configuration-size)         ; string
+  ;; (enable-ipv6? hetzner-configuration-enable-ipv6?)  ; boolean
+  )
 
 (define (read-key-fingerprint file-name)
   "Read the private key at FILE-NAME and return the key's fingerprint as a hex
@@ -355,6 +359,8 @@ environment type of 'hetzner-environment-type'."
   (maybe-raise-unsupported-configuration-error target)
   (let* ((config (machine-configuration target))
          (name (machine-display-name target))
+         (name (machine-display-name target))
+         (server-type (hetzner-configuration-server-type config))
          (region (hetzner-configuration-region config))
          (size (hetzner-configuration-size config))
          (ssh-key (hetzner-configuration-ssh-key config))
@@ -372,12 +378,11 @@ environment type of 'hetzner-environment-type'."
          ;;                 ("private_networking" . #nil)
          ;;                 ("volumes" . #nil)
          ;;                 ("tags" . ,(list->vector tags))))
-         (request-body `(("name" . ,name)
-                         ("image" . "ubuntu-20.04")
-                         ("server_type" "CX22")
-                         ;; ("region" . ,region)
+         (request-body `(("image" . "debian-11")
+                         ("name" . ,name)
+                         ("region" . ,region)
+                         ("server_type" .,server-type)
                          ;; ("size" . ,size)
-                         ;; ("image" . "debian-9-x64")
                          ;; ("ssh_keys" . ,(vector fingerprint))
                          ;; ("backups" . #f)
                          ;; ("ipv6" . ,enable-ipv6?)
@@ -470,4 +475,8 @@ for environment of type '~a'")
 
 ;; (fetch-endpoint "/v1/images")
 ;; (fetch-endpoint "/v1/servers")
+;; (fetch-endpoint "/v1/server_types")
 ;; (%hetzner-token)
+
+(map (lambda (x) (assoc-ref x "name"))
+     (vector->list (assoc-ref (fetch-endpoint "/v1/server_types") "server_types")))
