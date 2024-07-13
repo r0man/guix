@@ -55,9 +55,8 @@
             hetzner-configuration?
 
             hetzner-configuration-ssh-key
-            hetzner-configuration-tags
+            hetzner-configuration-labels
             hetzner-configuration-region
-            hetzner-configuration-size
             hetzner-configuration-enable-ipv6?
 
             hetzner-environment-type))
@@ -80,6 +79,7 @@
 ENDPOINT. This procedure is quite a bit more specialized than 'http-post', as
 it takes care to set headers such as 'Content-Type', 'Content-Length', and
 'Authorization' appropriately."
+  (format #t "POST ~a\n" (scm->json-string body))
   (let* ((uri (string->uri (string-append %api-base endpoint)))
          (body (string->bytevector (scm->json-string body) "UTF-8"))
          (headers `((User-Agent . "Guix Deploy")
@@ -101,6 +101,7 @@ it takes care to set headers such as 'Content-Type', 'Content-Length', and
     (let* ((response (read-response port))
            (body (read-response-body response)))
       (unless (= 2 (floor/ (response-code response) 100))
+        (format #t "RESPONSE: ~a\n" (bytevector->string body "UTF-8"))
         (raise
          (condition (&message
                      (message (format
@@ -131,14 +132,17 @@ takes care to set headers such as 'Accept' and 'Authorization' appropriately."
   make-hetzner-configuration
   hetzner-configuration?
   this-hetzner-configuration
-  (region hetzner-configuration-region) ; string
-  (server-type hetzner-configuration-server-type) ; string
+  (enable-ipv6? hetzner-configuration-enable-ipv6? ; boolean
+                (default #f))
+  (region hetzner-configuration-region  ; string
+          (default "eu-central"))
+  (server-type hetzner-configuration-server-type ; string
+               (default "cx22"))
+  (ssh-key hetzner-configuration-ssh-key) ; string
+  (labels hetzner-configuration-labels) ; list of strings
   ;; Digital ocean
-  ;; (ssh-key     hetzner-configuration-ssh-key)      ; string
-  ;; (tags        hetzner-configuration-tags)         ; list of strings
-  ;; (region      hetzner-configuration-region)       ; string
   ;; (size        hetzner-configuration-size)         ; string
-  ;; (enable-ipv6? hetzner-configuration-enable-ipv6?)  ; boolean
+
   )
 
 (define (read-key-fingerprint file-name)
@@ -149,24 +153,52 @@ string."
          (hash (get-public-key-hash pubkey 'md5)))
     (bytevector->hex-string hash)))
 
+(define (sort-labels labels)
+  "Sort the LABELS by key."
+  (sort-list labels (lambda (a b) (string<? (car a) (car b)))))
+
 (define (machine-droplet machine)
   "Return an alist describing the droplet allocated to MACHINE."
-  (let ((tags (hetzner-configuration-tags
-               (machine-configuration machine))))
+  (let* ((config (machine-configuration machine))
+         (labels (sort-labels (hetzner-configuration-labels config))))
     (find (lambda (droplet)
-            (equal? (assoc-ref droplet "labels") (list->vector tags)))
+            (equal? (sort-labels (assoc-ref droplet "labels")) labels))
           (vector->list
            (assoc-ref (fetch-endpoint "/v1/servers") "servers")))))
+
+(define (machine-get-ssh-key machine)
+  "Find the SSH key for MACHINE."
+  (let* ((ssh-key (hetzner-configuration-ssh-key (machine-configuration machine)))
+         (fingerprint (read-key-fingerprint ssh-key)))
+    (find (lambda (droplet)
+            (equal? (assoc-ref droplet "fingerprint") fingerprint))
+          (vector->list
+           (assoc-ref (fetch-endpoint "/v1/ssh_keys") "ssh_keys")))))
+
+(define (machine-create-ssh-key machine)
+  "Create the SSH key for MACHINE."
+  (let* ((config (machine-configuration machine))
+         (name (machine-display-name machine))
+         (ssh-key (hetzner-configuration-ssh-key config))
+         (fingerprint (read-key-fingerprint ssh-key))
+         (public-key (public-key-from-file ssh-key))
+         (labels (hetzner-configuration-labels config))
+         (request-body `(("name" . ,name)
+                         ("fingerprint" . ,fingerprint)
+                         ("public_key" . ,(format #f "ssh-~a ~a"
+                                                  (get-key-type public-key)
+                                                  (public-key->string public-key)))
+                         ("labels" . ,labels)))
+         (response (post-endpoint "/v1/ssh_keys" request-body)))
+    (assoc-ref (json-string->scm response) "ssh_key")))
 
 (define (machine-public-ipv4-network machine)
   "Return the public IPv4 network interface of the droplet allocated to
 MACHINE as an alist. The expected fields are 'ip_address', 'netmask', and
 'gateway'."
   (and-let* ((droplet (machine-droplet machine))
-             (networks (assoc-ref droplet "networks"))
-             (network (find (lambda (network)
-                              (string= "public" (assoc-ref network "type")))
-                            (vector->list (assoc-ref networks "v4")))))
+             (public-net (assoc-ref droplet "public_net"))
+             (network (assoc-ref public-net "ipv4")))
     network))
 
 
@@ -178,7 +210,7 @@ MACHINE as an alist. The expected fields are 'ip_address', 'netmask', and
   "Internal implementation of 'machine-remote-eval' for MACHINE instances with
 an environment type of 'hetzner-environment-type'."
   (let* ((network (machine-public-ipv4-network target))
-         (address (assoc-ref network "ip_address"))
+         (address (assoc-ref network "ip"))
          (ssh-key (hetzner-configuration-ssh-key
                    (machine-configuration target)))
          (delegate (machine
@@ -305,11 +337,12 @@ guix system reconfigure /etc/bootstrap-config.scm"
 named DROPLET-NAME."
   (and-let* ((droplet (machine-droplet machine))
              (droplet-id (assoc-ref droplet "id"))
-             (endpoint (format #f "/v2/droplets/~a/actions" droplet-id)))
+             (endpoint (format #f "/v1/servers/~a/actions" droplet-id)))
     (let loop ()
       (let ((actions (assoc-ref (fetch-endpoint endpoint) "actions")))
+        (format #t "Waiting for machine ...\n~a\n" actions)
         (unless (every (lambda (action)
-                         (string= "completed" (assoc-ref action "status")))
+                         (string= "success" (assoc-ref action "status")))
                        (vector->list actions))
           (sleep 5)
           (loop))))))
@@ -319,6 +352,7 @@ named DROPLET-NAME."
   (let loop ()
     (catch #t
       (lambda ()
+        (format #t "Open SSH to ~a using ~a ...\n" address ssh-key)
         (open-ssh-session address #:user "root" #:identity ssh-key))
       (lambda args
         (sleep 5)
@@ -362,42 +396,28 @@ environment type of 'hetzner-environment-type'."
          (name (machine-display-name target))
          (server-type (hetzner-configuration-server-type config))
          (region (hetzner-configuration-region config))
-         (size (hetzner-configuration-size config))
-         (ssh-key (hetzner-configuration-ssh-key config))
-         (fingerprint (read-key-fingerprint ssh-key))
          (enable-ipv6? (hetzner-configuration-enable-ipv6? config))
-         (tags (hetzner-configuration-tags config))
-         ;; (request-body `(("name" . ,name)
-         ;;                 ("region" . ,region)
-         ;;                 ("size" . ,size)
-         ;;                 ("image" . "debian-9-x64")
-         ;;                 ("ssh_keys" . ,(vector fingerprint))
-         ;;                 ("backups" . #f)
-         ;;                 ("ipv6" . ,enable-ipv6?)
-         ;;                 ("user_data" . #nil)
-         ;;                 ("private_networking" . #nil)
-         ;;                 ("volumes" . #nil)
-         ;;                 ("tags" . ,(list->vector tags))))
+         (labels (hetzner-configuration-labels config))
+         (ssh-key-object (or (machine-get-ssh-key %hetzner-machine)
+                             (machine-create-ssh-key %hetzner-machine)))
          (request-body `(("image" . "debian-11")
+                         ("labels" . ,labels)
                          ("name" . ,name)
+                         ("public_net" . (("enable_ipv6" . ,enable-ipv6?)))
                          ("region" . ,region)
-                         ("server_type" .,server-type)
-                         ;; ("size" . ,size)
-                         ;; ("ssh_keys" . ,(vector fingerprint))
-                         ;; ("backups" . #f)
-                         ;; ("ipv6" . ,enable-ipv6?)
-                         ;; ("user_data" . #nil)
-                         ;; ("private_networking" . #nil)
-                         ;; ("volumes" . #nil)
-                         ;; ("tags" . ,(list->vector tags))
-                         ))
+                         ("server_type" . ,server-type)
+                         ("ssh_keys" . ,(vector (assoc-ref ssh-key-object "id")))))
          (response (post-endpoint "/v1/servers" request-body)))
+    (format #t "Server created.\n~a\n" response)
     (machine-wait-until-available target)
     (let* ((network (machine-public-ipv4-network target))
-           (address (assoc-ref network "ip_address")))
+           (address (assoc-ref network "ip"))
+           (ssh-key (hetzner-configuration-ssh-key config)))
+      (format #t "Machine ready. Waiting for SSH at ~a ...\n" address)
       (wait-for-ssh address ssh-key)
       (let* ((ssh-session (open-ssh-session address #:user "root" #:identity ssh-key))
              (sftp-session (make-sftp-session ssh-session)))
+        (format #t "Infecting machine ...\n")
         (call-with-remote-output-file sftp-session "/tmp/guix-infect.sh"
                                       (lambda (port)
                                         (display (guix-infect network) port)))
@@ -406,6 +426,7 @@ environment type of 'hetzner-environment-type'."
         (catch 'guile-ssh-error
           (lambda () (rexec ssh-session "reboot"))
           (lambda args #t)))
+      (format #t "Waiting for reboot ...\n")
       (wait-for-ssh address ssh-key)
       (let ((delegate (machine
                        (operating-system (add-static-networking target network))
@@ -473,10 +494,18 @@ for environment of type '~a'")
                                 config
                                 environment)))))
 
+(use-modules (scratch))
+;; (hetzner-configuration? (machine-configuration %hetzner-machine))
+;; (machine-wait-until-available %hetzner-machine)
+;; (maybe-raise-unsupported-configuration-error %hetzner-machine)
+;; (deploy-hetzner %hetzner-machine)
+
 ;; (fetch-endpoint "/v1/images")
 ;; (fetch-endpoint "/v1/servers")
 ;; (fetch-endpoint "/v1/server_types")
 ;; (%hetzner-token)
 
-(map (lambda (x) (assoc-ref x "name"))
-     (vector->list (assoc-ref (fetch-endpoint "/v1/server_types") "server_types")))
+;; (map (lambda (x) (assoc-ref x "name"))
+;;      (vector->list (assoc-ref (fetch-endpoint "/v1/server_types") "server_types")))
+
+;; ./pre-inst-env guix shell guile-next guile-ares-rs -- guile -c '((@ (ares server) run-nrepl-server))'
