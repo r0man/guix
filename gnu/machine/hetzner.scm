@@ -247,39 +247,44 @@ interface, return a Bash script that will install the Guix system."
        (host-name "gnu-bootstrap")
        (timezone "Etc/UTC")
        (bootloader (bootloader-configuration
-                    (bootloader grub-bootloader)
-                    (targets '("/dev/vda"))
+                    (bootloader grub-efi-bootloader)
+                    (targets '("/boot/efi"))
                     (terminal-outputs '(console))))
-       (file-systems (cons (file-system
-                             (mount-point "/")
-                             (device "/dev/vda1")
-                             (type "ext4"))
-                           %base-file-systems))
+       (file-systems (cons* (file-system
+                              (mount-point "/")
+                              (device "/dev/sda1")
+                              (type "ext4"))
+                            (file-system
+                              (mount-point "/boot/efi")
+                              (device "/dev/sda15")
+                              (type "vfat"))
+                            %base-file-systems))
        (services
-        (append (list (service static-networking-service-type
-                               (list (static-networking
-                                      (addresses
-                                       (list (network-address
-                                              (device "eth0")
-                                              (value ,(ip+netmask->cidr
-                                                       (assoc-ref network "ip_address")
-                                                       (assoc-ref network "netmask"))))))
-                                      (routes
-                                       (list (network-route
-                                              (destination "default")
-                                              (gateway ,(assoc-ref network "gateway")))))
-                                      (name-servers '("84.200.69.80" "84.200.70.40")))))
-                      (simple-service 'guile-load-path-in-global-env
-                                      session-environment-service-type
-                                      `(("GUILE_LOAD_PATH"
-                                         . "/run/current-system/profile/share/guile/site/3.0")
-                                        ("GUILE_LOAD_COMPILED_PATH"
-                                         . ,(string-append "/run/current-system/profile/lib/guile/3.0/site-ccache:"
-                                                           "/run/current-system/profile/share/guile/site/3.0"))))
-                      (service openssh-service-type
-                               (openssh-configuration
-                                (log-level 'debug)
-                                (permit-root-login 'prohibit-password))))
+        (append (list ;; (service static-networking-service-type
+                 ;;          (list (static-networking
+                 ;;                 (addresses
+                 ;;                  (list (network-address
+                 ;;                         (device "eth0")
+                 ;;                         (value ,(ip+netmask->cidr
+                 ;;                                  (assoc-ref network "ip")
+                 ;;                                  (assoc-ref network "netmask"))))))
+                 ;;                 (routes
+                 ;;                  (list (network-route
+                 ;;                         (destination "default")
+                 ;;                         (gateway ,(assoc-ref network "gateway")))))
+                 ;;                 (name-servers '("84.200.69.80" "84.200.70.40")))))
+                 (service dhcp-client-service-type)
+                 (simple-service 'guile-load-path-in-global-env
+                                 session-environment-service-type
+                                 `(("GUILE_LOAD_PATH"
+                                    . "/run/current-system/profile/share/guile/site/3.0")
+                                   ("GUILE_LOAD_COMPILED_PATH"
+                                    . ,(string-append "/run/current-system/profile/lib/guile/3.0/site-ccache:"
+                                                      "/run/current-system/profile/share/guile/site/3.0"))))
+                 (service openssh-service-type
+                          (openssh-configuration
+                           (log-level 'debug)
+                           (permit-root-login 'prohibit-password))))
                 %base-services))))
   (format #f "#!/bin/bash
 
@@ -326,7 +331,10 @@ guix system build /etc/bootstrap-config.scm
 guix system reconfigure /etc/bootstrap-config.scm
 mv /etc /old-etc
 mkdir /etc
-cp -r /old-etc/{passwd,group,shadow,gshadow,mtab,guix,bootstrap-config.scm} /etc/
+cp -r /old-etc/{passwd,group,shadow,gshadow,mtab,guix,bootstrap-config.scm,resolv.conf} /etc/
+export GIT_SSL_CAINFO=/old-etc/ssl/certs/ca-certificates.crt
+export SSL_CERT_DIR=/old-etc/ssl/certs
+export SSL_CERT_FILE=/old-etc/ssl/certs/ca-certificates.crt
 guix system reconfigure /etc/bootstrap-config.scm"
           ;; Escape the bare backtick to avoid having it interpreted by Bash.
           (string-replace-substring
@@ -363,19 +371,20 @@ named DROPLET-NAME."
 configuration for the public IPv4 network described by the alist NETWORK."
   (operating-system
     (inherit (machine-operating-system target))
-    (services (cons* (service static-networking-service-type
-                              (list (static-networking
-                                     (addresses
-                                      (list (network-address
-                                             (device "eth0")
-                                             (value (ip+netmask->cidr
-                                                     (assoc-ref network "ip_address")
-                                                     (assoc-ref network "netmask"))))))
-                                     (routes
-                                      (list (network-route
-                                             (destination "default")
-                                             (gateway (assoc-ref network "gateway")))))
-                                     (name-servers '("84.200.69.80" "84.200.70.40")))))
+    (services (cons* (service dhcp-client-service-type)
+                     ;; (service static-networking-service-type
+                     ;;          (list (static-networking
+                     ;;                 (addresses
+                     ;;                  (list (network-address
+                     ;;                         (device "eth0")
+                     ;;                         (value (ip+netmask->cidr
+                     ;;                                 (assoc-ref network "ip_address")
+                     ;;                                 (assoc-ref network "netmask"))))))
+                     ;;                 (routes
+                     ;;                  (list (network-route
+                     ;;                         (destination "default")
+                     ;;                         (gateway (assoc-ref network "gateway")))))
+                     ;;                 (name-servers '("84.200.69.80" "84.200.70.40")))))
                      (simple-service 'guile-load-path-in-global-env
                                      session-environment-service-type
                                      `(("GUILE_LOAD_PATH"
