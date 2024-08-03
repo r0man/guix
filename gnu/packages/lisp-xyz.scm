@@ -18316,8 +18316,8 @@ extensions developed by technical users.")
 ;;   (sbcl-package->ecl-package sbcl-kons-9))
 
 (define-public sbcl-lack
-  (let ((commit "abff8efeb0c3a848e6bb0022f2b8b7fa3a1bc88b")
-        (revision "1"))
+  (let ((commit "35d3a8e03cab9204eec88c7dfe4d5366fc2ea922")
+        (revision "2"))
     (package
       (name "sbcl-lack")
       (version (git-version "0.1.0" revision commit))
@@ -18329,25 +18329,36 @@ extensions developed by technical users.")
                (commit commit)))
          (file-name (git-file-name "lack" version))
          (sha256
-          (base32 "1avh4ygcj9xcx4m17nj0wnxxaisk26w4ljs2bibzxaln24x7pi85"))))
+          (base32 "1yrhhzn8ywdjxwpaxzlnsm2lslhy45r89brn8gh5n08mdyjlp4l2"))))
       (build-system asdf-build-system/sbcl)
       (native-inputs
        (list sbcl-prove))
       (inputs
        `(("circular-streams" ,sbcl-circular-streams)
+         ("cl-base64", sbcl-cl-base64)
+         ("cl-isaac" ,sbcl-cl-isaac)
+         ("dbi" ,sbcl-dbi)
          ("http-body" ,sbcl-http-body)
          ("ironclad" ,sbcl-ironclad)
          ("local-time" ,sbcl-local-time)
          ("quri" ,sbcl-quri)
-         ("trivial-mimes" ,sbcl-trivial-mimes)))
+         ("trivial-mimes" ,sbcl-trivial-mimes)
+         ("trivial-rfc-1123" , sbcl-trivial-rfc-1123)))
       (arguments
        '(#:asd-systems '("lack"
+                         "lack-component"
+                         "lack-middleware-accesslog"
+                         "lack-middleware-auth-basic"
+                         "lack-middleware-backtrace"
+                         "lack-middleware-csrf"
+                         "lack-middleware-mount"
+                         "lack-middleware-session"
+                         "lack-middleware-static"
                          "lack-request"
                          "lack-response"
-                         "lack-component"
+                         "lack-session-store-dbi"
                          "lack-util"
-                         "lack-middleware-backtrace"
-                         "lack-middleware-static")
+                         "lack-util-writer-stream")
          ;; XXX: Component :CLACK not found
          #:tests? #f))
       (home-page "https://github.com/fukamachi/lack")
