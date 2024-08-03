@@ -11307,6 +11307,36 @@ in a native template application).")
 (define-public ecl-clog
   (sbcl-package->ecl-package sbcl-clog))
 
+(define-public sbcl-clog-docs
+  (package
+    (inherit sbcl-clog)
+    (name "sbcl-clog-docs")
+    (version "2.3")
+    (inputs
+     (list sbcl-3bmd
+           sbcl-clog
+           sbcl-colorize
+           sbcl-print-licenses))
+    (arguments
+     '(#:asd-systems '("clog/docs")
+       #:phases (modify-phases %standard-phases
+                  (add-after 'unpack 'fix-symbol-name
+                    (lambda _
+                      (substitute* "source/clog-docs.lisp"
+                        (("clog:@CLOG-MANUAL")
+                         "clog::@CLOG_MANUAL")))))))
+    (synopsis "Common Lisp Omnificent GUI documentation")
+    (description
+     "This package provides the documentation for CLOG, a Common Lisp web
+framework for building GUI applications.")
+    (license license:bsd-3)))
+
+(define-public cl-clog-docs
+  (sbcl-package->cl-source-package sbcl-clog-docs))
+
+(define-public ecl-clog-docs
+  (sbcl-package->ecl-package sbcl-clog-docs))
+
 (define-public sbcl-clop
   (let ((commit "c0c3fe7efa5ac95ba1644febfb2c2acab757fcda")
         (revision "0"))
