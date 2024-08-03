@@ -11248,6 +11248,36 @@ more robust than systems based on object prevalence.")
 (define-public ecl-clobber
   (sbcl-package->ecl-package sbcl-clobber))
 
+(define-public sbcl-clog-ace
+  (let ((commit "61f3c2e48402e043738b3079271f64a3b515af28")
+        (revision "0"))
+    (package
+      (name "sbcl-clog-ace")
+      (build-system asdf-build-system/sbcl)
+      (version (git-version "0.1.0" revision commit))
+      (home-page "https://github.com/rabbibotton/clog-ace")
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url home-page)
+               (commit commit)))
+         (file-name (git-file-name "cl-clog-ace" version))
+         (sha256
+          (base32 "0bwg0b04ff0dgm9k6fw976amdz0s35lss3nv5ywznx9plahi5s5h"))))
+      (inputs (list sbcl-clog))
+      (arguments '(#:asd-systems '("clog-ace")))
+      (synopsis "CLOG Plugin for the ACE Editor")
+      (description "This package provides a CLOG Plugin for the ACE Editor, a
+high performance code editor for the web.")
+      (license license:bsd-2))))
+
+(define-public cl-clog-ace
+  (sbcl-package->cl-source-package sbcl-clog-ace))
+
+(define-public ecl-clog-ace
+  (sbcl-package->ecl-package sbcl-clog-ace))
+
 (define-public sbcl-clog
   (package
     (name "sbcl-clog")
