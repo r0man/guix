@@ -23752,6 +23752,34 @@ corresponding OS system functions are called.")
 (define-public cl-ppath
   (sbcl-package->cl-source-package sbcl-ppath))
 
+(define-public sbcl-print-licenses
+  (let ((commit "3949663318fb736f4ee660e3aa810875187d531c")
+        (revision "0"))
+    (package
+      (name "sbcl-print-licenses")
+      (build-system asdf-build-system/sbcl)
+      (version (git-version "0.1.0" revision commit))
+      (home-page "https://github.com/vindarel/print-licenses/")
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url home-page)
+               (commit commit)))
+         (file-name (git-file-name "cl-print-licenses" version))
+         (sha256
+          (base32 "14i6r6mf16dlj1g4xk0alg2912y3wy0qbfpyvvgsgxkkar63cmi5"))))
+      (inputs (list sbcl-alexandria sbcl-iterate))
+      (synopsis "Print licenses used by a Common Lisp project")
+      (description "Print licenses used by a Common Lisp project and its dependencies.")
+      (license license:bsd-2))))
+
+(define-public ecl-print-licenses
+  (sbcl-package->ecl-package sbcl-print-licenses))
+
+(define-public cl-print-licenses
+  (sbcl-package->cl-source-package sbcl-print-licenses))
+
 (define-public sbcl-printv
   (let ((commit "e717a7fe076dae861a96117b2f9af29db8d2294d")
         (revision "2"))
