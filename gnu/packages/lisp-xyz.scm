@@ -11251,7 +11251,7 @@ more robust than systems based on object prevalence.")
 (define-public sbcl-clog
   (package
     (name "sbcl-clog")
-    (version "1.2")
+    (version "2.3")
     (source
      (origin
        (method git-fetch)
@@ -11260,12 +11260,14 @@ more robust than systems based on object prevalence.")
              (commit (string-append "v" version))))
        (file-name (git-file-name "cl-clog" version))
        (sha256
-        (base32 "0f4i6571nm0j704zgnh60sc9slifs11byb2gs8gamqjcfh931dap"))))
+        (base32 "175zb93kxnxv0hr8435mkm94fqhjq51wq55ybd55kcyk5y5h2xaf"))))
     (build-system asdf-build-system/sbcl)
     (inputs
      (list sbcl-3bmd
            sbcl-alexandria
+           sbcl-atomics
            sbcl-bordeaux-threads
+           sbcl-cl-pass
            sbcl-cl-ppcre
            sbcl-cl-sqlite
            sbcl-cl-template
@@ -11277,11 +11279,12 @@ more robust than systems based on object prevalence.")
            sbcl-lack
            sbcl-mgl-pax
            sbcl-parse-float
+           sbcl-print-licenses
            sbcl-quri
            sbcl-trivial-open-browser
            sbcl-websocket-driver))
     (arguments
-     '(#:asd-systems '("clog" "clog/docs" "clog/tools")
+     '(#:asd-systems '("clog")
        #:phases (modify-phases %standard-phases
                   (add-after 'unpack 'fix-symbol-name
                     (lambda _
