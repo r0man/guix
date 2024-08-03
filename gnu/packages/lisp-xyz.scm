@@ -11278,6 +11278,38 @@ high performance code editor for the web.")
 (define-public ecl-clog-ace
   (sbcl-package->ecl-package sbcl-clog-ace))
 
+
+(define-public sbcl-clog-terminal
+  (let ((commit "304e3308e050abe0184ecc904cd039986e54b34f")
+        (revision "0"))
+    (package
+      (name "sbcl-clog-terminal")
+      (build-system asdf-build-system/sbcl)
+      (version (git-version "0.1.0" revision commit))
+      (home-page "https://github.com/rabbibotton/clog-terminal")
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url home-page)
+               (commit commit)))
+         (file-name (git-file-name "cl-clog-terminal" version))
+         (sha256
+          (base32 "1pvrja8fvdzqmiqzl23lb7665vcpx9lhwxahns81wlykkyx7cjd5"))))
+      (inputs (list sbcl-clog))
+      (arguments '(#:asd-systems '("clog-terminal")))
+      (synopsis "CLOG Plugin for jQuery Terminal")
+      (description "This package provides a CLOG Plugin for jQuery Terminal,
+an Open Source JavaScript library for creating command line interpreters in
+your applications.")
+      (license license:bsd-2))))
+
+(define-public cl-clog-terminal
+  (sbcl-package->cl-source-package sbcl-clog-terminal))
+
+(define-public ecl-clog-terminal
+  (sbcl-package->ecl-package sbcl-clog-terminal))
+
 (define-public sbcl-clog
   (package
     (name "sbcl-clog")
