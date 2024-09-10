@@ -11278,7 +11278,6 @@ high performance code editor for the web.")
 (define-public ecl-clog-ace
   (sbcl-package->ecl-package sbcl-clog-ace))
 
-
 (define-public sbcl-clog-terminal
   (let ((commit "304e3308e050abe0184ecc904cd039986e54b34f")
         (revision "0"))
@@ -11354,8 +11353,6 @@ your applications.")
                     (add-after 'unpack 'disable-asdf-systems
                       (lambda _
                         (substitute* "clog.asd"
-                          ;; (("\\(asdf:defsystem #:clog/docs")
-                          ;;  "#+(or)(asdf:defsystem #:clog/docs")
                           (("\\(asdf:defsystem #:clog/tools")
                            "#+(or)(asdf:defsystem #:clog/tools"))))
                     (add-after 'unpack 'delete-files
@@ -11365,7 +11362,6 @@ your applications.")
                                     "clogframe"
                                     "demos"
                                     "doc"
-                                    ;; "source/clog-docs.lisp"
                                     "templates"
                                     "test"
                                     "tools"
@@ -11386,68 +11382,6 @@ in a native template application).")
 (define-public ecl-clog
   (sbcl-package->ecl-package sbcl-clog))
 
-(define-public sbcl-clog-docs
-  (let ((commit "f736bfa4e4c934affd3218c59541a1ed4ad061f7")
-        (revision "1"))
-    (package
-      (name "sbcl-clog-docs")
-      (version (git-version "2.3" revision commit))
-      (source
-       (origin
-         (method git-fetch)
-         (uri (git-reference
-               (url "https://github.com/rabbibotton/clog")
-               (commit commit)))
-         (file-name (git-file-name "cl-clog" version))
-         (sha256
-          (base32 "0bb9fxpzn1fc3902nkb16ikdp1vvisq4kzh2dgyj5nr45s22sn5b"))))
-      (build-system asdf-build-system/sbcl)
-      (native-inputs
-       `(("clog" ,sbcl-clog)))
-      (inputs
-       (list sbcl-3bmd
-             sbcl-clog
-             sbcl-colorize
-             sbcl-print-licenses))
-      (arguments
-       '(#:asd-systems '("clog/docs")
-         #:asd-operation "compile-system"
-         #:phases
-         (modify-phases %standard-phases
-           (add-after 'unpack 'disable-asdf-systems
-             (lambda _
-               (substitute* "clog.asd"
-                 (("\\(asdf:defsystem #:clog\\s+")
-                  "#+(or)(asdf:defsystem #:clog\n")
-                 (("\\(asdf:defsystem #:clog/tools")
-                  "#+(or)(asdf:defsystem #:clog/tools"))))
-           (add-after 'unpack 'fix-symbol-name
-             (lambda* (#:key inputs outputs #:allow-other-keys)
-               (substitute* "source/clog-docs.lisp"
-                 (("clog:@CLOG-MANUAL")
-                  "clog::@CLOG_MANUAL"))))
-           (add-after 'unpack 'fix-load-path
-             (lambda* (#:key inputs outputs #:allow-other-keys)
-               (substitute* "source/clog-docs.lisp"
-                 (("\\(load \"([^\"]+)\"\\)" _ source)
-                  (string-append
-                   "(load (namestring (asdf:system-relative-pathname "
-                   (if (member source '("source/clog-docs.lisp"))
-                       ":clog/tools" ":clog")
-                   " \"" source "\")))"))))))))
-      (home-page "https://github.com/rabbibotton/clog")
-      (synopsis "Common Lisp Omnificent GUI documentation")
-      (description
-       "This package provides the documentation for CLOG, a Common Lisp web
-framework for building GUI applications.")
-      (license license:bsd-3))))
-
-(define-public cl-clog-docs
-  (sbcl-package->cl-source-package sbcl-clog-docs))
-
-(define-public ecl-clog-docs
-  (sbcl-package->ecl-package sbcl-clog-docs))
-
 (define-public sbcl-clog-tools
   (let ((commit "f736bfa4e4c934affd3218c59541a1ed4ad061f7")
         (revision "1"))
@@ -11465,13 +11399,12 @@ framework for building GUI applications.")
          (sha256
           (base32 "0bb9fxpzn1fc3902nkb16ikdp1vvisq4kzh2dgyj5nr45s22sn5b"))))
       (build-system asdf-build-system/sbcl)
-      (propagated-inputs (list sbcl-clog))
+      (native-inputs (list sbcl-clog
+                           sbcl-clog-ace
+                           sbcl-clog-terminal))
       (inputs
        (list sbcl-3bmd
              sbcl-cl-indentify
-             sbcl-clog
-             sbcl-clog-ace
-             sbcl-clog-terminal
              sbcl-definitions
              sbcl-parenscript
              sbcl-plump
@@ -11481,33 +11414,31 @@ framework for building GUI applications.")
       (arguments
        '(#:asd-systems '("clog/tools")
          #:phases (modify-phases %standard-phases
-                    ;; (add-after 'unpack 'disable-asdf-systems
-                    ;;   (lambda _
-                    ;;     (substitute* "clog.asd"
-                    ;;       (("\\(asdf:defsystem #:clog\\s+")
-                    ;;        "#+(or)(asdf:defsystem #:clog\n")
-                    ;;       (("\\(asdf:defsystem #:clog/docs")
-                    ;;        "#+(or)(asdf:defsystem #:clog/docs"))))
-                    ;; (add-after 'unpack 'delete-files
-                    ;;   (lambda _
-                    ;;     (for-each delete-file-recursively
-                    ;;               '(".github"
-                    ;;                 "clogframe"
-                    ;;                 "demos"
-                    ;;                 "doc"
-                    ;;                 "templates"
-                    ;;                 "test"
-                    ;;                 "tutorial"
-                    ;;                 ;; "source"
-                    ;;                 ))
-                    ;;     ;; (substitute* "source/asdf-ext.lisp"
-                    ;;     ;;   ((".*defclass.*") ""))
-                    ;;     ;; (for-each (lambda (file)
-                    ;;     ;;             (when (not (member file '("source/asdf-ext.lisp")))
-                    ;;     ;;               (delete-file-recursively file)))
-                    ;;     ;;           (find-files "source" ".*"))
-                    ;;     ))
-                    )))
+                    (add-after 'unpack 'disable-asdf-systems
+                      (lambda _
+                        (substitute* "clog.asd"
+                          (("\\(asdf:defsystem #:clog\\s+")
+                           "#+(or)(asdf:defsystem #:clog\n")
+                          (("\\(asdf:defsystem #:clog/docs")
+                           "#+(or)(asdf:defsystem #:clog/docs"))))
+                    (add-after 'unpack 'delete-files
+                      (lambda _
+                        (for-each delete-file-recursively
+                                  '(".github"
+                                    "clogframe"
+                                    "demos"
+                                    "doc"
+                                    "templates"
+                                    "test"
+                                    "tutorial"
+                                    "source"))
+                        ;; (substitute* "source/asdf-ext.lisp"
+                        ;;   ((".*defclass.*") ""))
+                        ;; (for-each (lambda (file)
+                        ;;             (when (not (member file '("source/asdf-ext.lisp")))
+                        ;;               (delete-file-recursively file)))
+                        ;;           (find-files "source" ".*"))
+                        )))))
       (home-page "https://github.com/rabbibotton/clog")
       (synopsis "Common Lisp Omnificent GUI")
       (description
