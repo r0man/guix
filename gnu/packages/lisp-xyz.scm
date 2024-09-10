@@ -11349,15 +11349,15 @@ your applications.")
              sbcl-trivial-open-browser
              sbcl-websocket-driver))
       (arguments
-       '(#:asd-systems '("clog")
+       '(#:asd-systems '("clog" "clog/docs")
          #:phases (modify-phases %standard-phases
-                    ;; (add-after 'unpack 'disable-asdf-systems
-                    ;;   (lambda _
-                    ;;     (substitute* "clog.asd"
-                    ;;       (("\\(asdf:defsystem #:clog/docs")
-                    ;;        "#+(or)(asdf:defsystem #:clog/docs")
-                    ;;       (("\\(asdf:defsystem #:clog/tools")
-                    ;;        "#+(or)(asdf:defsystem #:clog/tools"))))
+                    (add-after 'unpack 'disable-asdf-systems
+                      (lambda _
+                        (substitute* "clog.asd"
+                          ;; (("\\(asdf:defsystem #:clog/docs")
+                          ;;  "#+(or)(asdf:defsystem #:clog/docs")
+                          (("\\(asdf:defsystem #:clog/tools")
+                           "#+(or)(asdf:defsystem #:clog/tools"))))
                     (add-after 'unpack 'delete-files
                       (lambda _
                         (for-each delete-file-recursively
@@ -11365,7 +11365,7 @@ your applications.")
                                     "clogframe"
                                     "demos"
                                     "doc"
-                                    "source/clog-docs.lisp"
+                                    ;; "source/clog-docs.lisp"
                                     "templates"
                                     "test"
                                     "tools"
