@@ -11399,12 +11399,12 @@ in a native template application).")
          (sha256
           (base32 "0bb9fxpzn1fc3902nkb16ikdp1vvisq4kzh2dgyj5nr45s22sn5b"))))
       (build-system asdf-build-system/sbcl)
-      (native-inputs (list sbcl-clog
-                           sbcl-clog-ace
-                           sbcl-clog-terminal))
       (inputs
        (list sbcl-3bmd
              sbcl-cl-indentify
+             sbcl-clog
+             sbcl-clog-ace
+             sbcl-clog-terminal
              sbcl-definitions
              sbcl-parenscript
              sbcl-plump
