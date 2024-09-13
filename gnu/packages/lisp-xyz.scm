@@ -11310,7 +11310,7 @@ your applications.")
   (sbcl-package->ecl-package sbcl-clog-terminal))
 
 (define-public sbcl-clog
-  (let ((commit "f736bfa4e4c934affd3218c59541a1ed4ad061f7")
+  (let ((commit "4a35cab1b00b722deff9bb052ca6a0321c1adfba")
         (revision "1"))
     (package
       (name "sbcl-clog")
@@ -11324,7 +11324,7 @@ your applications.")
                (commit commit)))
          (file-name (git-file-name "cl-clog" version))
          (sha256
-          (base32 "0bb9fxpzn1fc3902nkb16ikdp1vvisq4kzh2dgyj5nr45s22sn5b"))))
+          (base32 "0j3wisfrkf7zkhg5jggh7mv9838xqvk7qiw52hnmid3pp0r5gkd9"))))
       (build-system asdf-build-system/sbcl)
       (inputs
        (list sbcl-3bmd
@@ -11413,7 +11413,7 @@ in a native template application).")
   (sbcl-package->ecl-package sbcl-clog))
 
 (define-public sbcl-clog-tools
-  (let ((commit "f736bfa4e4c934affd3218c59541a1ed4ad061f7")
+  (let ((commit "4a35cab1b00b722deff9bb052ca6a0321c1adfba")
         (revision "1"))
     (package
       (name "sbcl-clog-tools")
@@ -11427,7 +11427,7 @@ in a native template application).")
                (commit commit)))
          (file-name (git-file-name "cl-clog" version))
          (sha256
-          (base32 "0bb9fxpzn1fc3902nkb16ikdp1vvisq4kzh2dgyj5nr45s22sn5b"))))
+          (base32 "0j3wisfrkf7zkhg5jggh7mv9838xqvk7qiw52hnmid3pp0r5gkd9"))))
       (build-system asdf-build-system/sbcl)
       (inputs
        (list sbcl-3bmd
