@@ -6627,6 +6627,33 @@ trace (backtrace) at runtime in a Rust program.")
 API for Rust.")
     (license (list license:expat license:x11 license:asl2.0))))
 
+(define-public rust-bankstown-lv2-1
+  (package
+    (name "rust-bankstown-lv2")
+    (version "1.1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (crate-uri "bankstown-lv2" version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "1bcrn0b4b9v1mksaldhrdb6ncqlwldfwqxjlfp4gcpvl661qdmcb"))))
+    (build-system cargo-build-system)
+    (arguments
+     (list
+      #:cargo-inputs `(("rust-biquad" ,rust-biquad-0.4)
+                       ("rust-lv2" ,rust-lv2-0.6))
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-before 'install 'install-lv2
+            (lambda* (#:key outputs #:allow-other-keys)
+              (setenv "LIBDIR" (string-append (assoc-ref outputs "out") "/lib"))
+              (invoke "make" "install"))))))
+    (home-page "https://github.com/chadmed/bankstown")
+    (synopsis "Barebones, fast LV2 bass enhancement plugin.")
+    (description "This package provides a barebones, fast LV2 bass enhancement plugin.")
+    (license license:expat)))
+
 (define-public rust-base32-0.4
   (package
     (name "rust-base32")
