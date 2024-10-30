@@ -87250,6 +87250,28 @@ mile, ...).")
         (base32 "14sm5c8idb5jzib8dwf85p5yhd65vxjh946p80p49d2j6fsjw8y9"))))
     (arguments `(#:skip-build? #t))))
 
+(define-public rust-urid-derive-0.1
+  (package
+    (name "rust-urid-derive")
+    (version "0.1.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (crate-uri "urid-derive" version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "0i1nf0sgq4ai051h17s9msaavl3jfzdmdlsy8455pr88y0pfx7l1"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs (("rust-proc-macro2" ,rust-proc-macro2-1)
+                       ("rust-quote" ,rust-quote-1)
+                       ("rust-syn" ,rust-syn-1))))
+    (home-page "https://github.com/RustAudio/rust-lv2")
+    (synopsis "Procedural macros for urid")
+    (description "This package provides Procedural macros for urid.")
+    (license (list license:expat license:asl2.0))))
+
 (define-public rust-users-0.11
   (package
     (name "rust-users")
