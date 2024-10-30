@@ -90583,6 +90583,25 @@ combinators library.")
                        ("rust-memchr" ,rust-memchr-2)
                        ("rust-terminal-size" ,rust-terminal-size-0.2))))))
 
+(define-public rust-wmidi-3
+  (package
+    (name "rust-wmidi")
+    (version "3.1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (crate-uri "wmidi" version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "1kxnbs18nmpzm2hfwaaa5h2s77cmk5w53srzxqmrqlkdpdcrjafa"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t))
+    (home-page "https://github.com/RustAudio/wmidi")
+    (synopsis "Midi parsing library")
+    (description "This package provides Midi parsing library.")
+    (license license:expat)))
+
 (define-public rust-wycheproof-0.5
   (package
     (name "rust-wycheproof")
