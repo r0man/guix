@@ -87250,6 +87250,26 @@ mile, ...).")
         (base32 "14sm5c8idb5jzib8dwf85p5yhd65vxjh946p80p49d2j6fsjw8y9"))))
     (arguments `(#:skip-build? #t))))
 
+(define-public rust-urid-0.1
+  (package
+    (name "rust-urid")
+    (version "0.1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (crate-uri "urid" version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "195672gs136vczn1r4hkjg5vfa7vdzr26bzv6lwhk0z7cvbvaa38"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs (("rust-urid-derive" ,rust-urid-derive-0.1))))
+    (home-page "https://github.com/RustAudio/rust-lv2")
+    (synopsis "Library for idiomatic URID support")
+    (description "This package provides Library for idiomatic URID support.")
+    (license (list license:expat license:asl2.0))))
+
 (define-public rust-urid-derive-0.1
   (package
     (name "rust-urid-derive")
