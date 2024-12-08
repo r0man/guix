@@ -26234,6 +26234,44 @@ details.
 
 @end defvar
 
+@subsubheading Speaker Safety Daemon System Service
+
+@uref{https://github.com/AsahiLinux/speakersafetyd, Speaker Safety
+Daemon} is a userspace daemon that implements an analogue of the Texas
+Instruments Smart Amp speaker protection model. It can be used to
+protect the speakers on Apple Silicon devices.
+
+@defvar speakersafetyd-service-type
+This is the type for the @code{speakersafetyd} system service, whose
+value is a @command{speakersafetyd-configuration} record.
+
+@lisp
+(service speakersafetyd-service-type)
+@end lisp
+
+See below for details about @code{speakersafetyd-configuration}.
+@end defvar
+
+@deftp {Data Type} speakersafetyd-configuration
+Data type representing the configuration for @code{speakersafetyd-service}.
+
+@table @asis
+@item @code{blackbox-path} (default: @code{"/var/lib/speakersafetyd/blackbox"})
+Path to the blackbox dump directory.
+
+@item @code{config-path} (default: @code{(file-append speakersafetyd "/usr/share/speakersafetyd")})
+Path to the configuration base directory as a G-expression
+(@pxref{G-Expressions}).
+
+@item @code{max-reduction} (default: @code{7})
+Maximum gain reduction before panicing, useful for debugging.
+
+@item @code{package} (default: @var{speakersafetyd})
+The Speaker Safety Daemon package to use.
+
+@end table
+@end deftp
+
 @node File Search Services
 @subsection File Search Services
 
