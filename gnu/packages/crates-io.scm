@@ -1340,17 +1340,17 @@ in no_std.")
 contain numerals.")
     (license license:expat)))
 
-(define-public rust-alsa-0.8
+(define-public rust-alsa-0.9
   (package
     (name "rust-alsa")
-    (version "0.8.1")
+    (version "0.9.1")
     (source (origin
               (method url-fetch)
               (uri (crate-uri "alsa" version))
               (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
-                "02pzlq2q8ml28ikvkvm77bwdqmi22d6ak1qvrc0cr6yjb9adwd6f"))))
+                "0hvxc447bsynyhzhmznw6w2kwbid83p712dls4h1x8w3pavp4xgd"))))
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-test-flags
@@ -1368,6 +1368,7 @@ contain numerals.")
              "--skip=seq::seq_subscribe")
        #:cargo-inputs (("rust-alsa-sys" ,rust-alsa-sys-0.3)
                        ("rust-bitflags" ,rust-bitflags-2)
+                       ("rust-cfg-if" ,rust-cfg-if-1)
                        ("rust-libc" ,rust-libc-0.2)
                        ("rust-nix" ,rust-nix-0.26))))
     (inputs (list alsa-lib))
@@ -1378,6 +1379,37 @@ contain numerals.")
 parts of ALSA including audio playback, audio recording, HCtl API, raw MIDI and
 MIDI sequencer.")
     (license (list license:asl2.0 license:expat))))
+
+(define-public rust-alsa-0.8
+  (package
+    (inherit rust-alsa-0.9)
+    (name "rust-alsa")
+    (version "0.8.1")
+    (source (origin
+              (method url-fetch)
+              (uri (crate-uri "alsa" version))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "02pzlq2q8ml28ikvkvm77bwdqmi22d6ak1qvrc0cr6yjb9adwd6f"))))
+    (arguments
+     `(#:cargo-test-flags
+       (list "--release"
+             ;; Not the doc tests.
+             "--lib" "--bins" "--tests" "--"
+             ;; These try to use the audio interface
+             "--skip=pcm::drop"
+             "--skip=pcm::info_from_default"
+             "--skip=pcm::playback_to_default"
+             "--skip=pcm::record_from_default"
+             "--skip=seq::print_seqs"
+             "--skip=seq::seq_loopback"
+             "--skip=seq::seq_portsubscribeiter"
+             "--skip=seq::seq_subscribe")
+       #:cargo-inputs (("rust-alsa-sys" ,rust-alsa-sys-0.3)
+                       ("rust-bitflags" ,rust-bitflags-2)
+                       ("rust-libc" ,rust-libc-0.2)
+                       ("rust-nix" ,rust-nix-0.26))))))
 
 (define-public rust-alsa-0.7
   (package
