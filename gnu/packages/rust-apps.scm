@@ -3058,6 +3058,7 @@ of the project is to be runnable on untrusted networks without crashing.")
           (add-after 'unpack 'fix-paths
             (lambda _
               (substitute* "src/main.rs"
+                (("share/speakersafetyd") "usr/share/speakersafetyd")
                 (("/usr/local") #$output))))
           (add-after 'unpack 'remove-systemd-udev-rules
             (lambda _
