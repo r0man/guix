@@ -23,6 +23,7 @@
   #:use-module (gnu home services xdg)
   #:use-module (gnu packages linux)
   #:use-module (gnu services configuration)
+  #:use-module (gnu services sound)
   #:use-module (guix records)
   #:use-module (guix gexp)
   #:use-module (srfi srfi-1)
@@ -32,7 +33,10 @@
             %pulseaudio-rtp-multicast-address
 
             home-pipewire-configuration
-            home-pipewire-service-type))
+            home-pipewire-service-type
+
+            home-speakersafetyd-configuration
+            home-speakersafetyd-service-type))
 
 
 ;;;
@@ -249,3 +253,22 @@ load-module module-rtp-recv sap_address=~a\n" source-ip)
     "Define a PulseAudio source to receive audio broadcasted over RTP by
 another PulseAudio instance.")
    (default-value %pulseaudio-rtp-multicast-address)))
+
+
+;;;
+;;; Speaker Safety Daemon
+;;;
+
+(define-syntax-rule (home-speakersafetyd-configuration fields ...)
+  (for-home (speakersafetyd-configuration
+             (inherit (speakersafetyd-configuration
+                       (blackbox-path "~/.local/state/speakersafetyd/blackbox")))
+             fields ...)))
+
+(define home-speakersafetyd-service-type
+  (service-type
+   (inherit (system->home-service-type speakersafetyd-service-type))
+   (default-value (home-speakersafetyd-configuration))))
+
+(define-service-type-mapping
+  speakersafetyd-service-type => home-speakersafetyd-service-type)
