@@ -4487,6 +4487,36 @@ and stop units of work, which may receive @code{Close} signals from many clients
 struct to another.")
     (license license:expat)))
 
+(define-public go-github-com-jmattheis-goverter
+  (package
+    (name "go-github-com-jmattheis-goverter")
+    (version "1.7.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/jmattheis/goverter")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0ph8470wxpf8p2cdr5w3hkchlgpiyzljlsdna9jvhgw53sf2c32n"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/jmattheis/goverter"
+      #:tests? #f))
+    (propagated-inputs (list go-gopkg-in-yaml-v3 go-golang-org-x-tools
+                             go-github-com-stretchr-testify
+                             go-github-com-dave-jennifer))
+    (home-page "https://github.com/jmattheis/goverter")
+    (synopsis "Generate type-safe Go converters by defining function
+signatures")
+    (description
+     "This package can generate type-safe converters for Go.  The project is
+meant as alternative to @@url{https://github.com/jinzhu/copier,jinzhu/copier}
+that doesn't use reflection.")
+    (license license:expat)))
+
 (define-public go-github-com-johnkerl-lumin
   (package
     (name "go-github-com-johnkerl-lumin")
