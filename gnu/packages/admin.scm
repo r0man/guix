@@ -6182,6 +6182,54 @@ mechanisms if you really want to protect services.")
     (description "This package provides a library for the Hetzner Cloud API.")
     (license license:expat)))
 
+(define-public go-github-com-hetznercloud-cli
+  (package
+    (name "go-github-com-hetznercloud-cli")
+    (version "1.49.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/hetznercloud/cli")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0mgd1rv0i18h7jbzl034ffpfxvnjirp60qwxsjpfy42jh1d8xbjm"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:go go-1.22
+      #:install-source? #f
+      #:import-path "github.com/hetznercloud/cli/cmd/hcloud"
+      #:unpack-path "github.com/hetznercloud/cli"))
+    (propagated-inputs (list go-golang-org-x-term
+                             go-golang-org-x-crypto
+                             go-go-uber-org-mock
+                             go-github-com-swaggest-assertjson
+                             go-github-com-stretchr-testify
+                             go-github-com-spf13-viper
+                             go-github-com-spf13-pflag
+                             go-github-com-spf13-cobra
+                             go-github-com-spf13-cast
+                             go-github-com-jedib0t-go-pretty-list
+                             go-github-com-jedib0t-go-pretty-progress
+                             go-github-com-jedib0t-go-pretty-table
+                             go-github-com-jedib0t-go-pretty-text
+                             go-github-com-hetznercloud-hcloud-go
+                             go-github-com-guptarohit-asciigraph
+                             go-github-com-goccy-go-yaml
+                             go-github-com-fatih-structs
+                             go-github-com-fatih-color
+                             go-github-com-dustin-go-humanize
+                             go-github-com-cheggaaa-pb-v3
+                             go-github-com-burntsushi-toml))
+    (home-page "https://github.com/hetznercloud/cli")
+    (synopsis "Command-line interface for the Hetzner Cloud service")
+    (description
+     "This package provides the @@code{hcloud} binary, a command-line
+interface for interacting with the Hetzner Cloud service.")
+    (license license:expat)))
+
 (define-public restartd
   (let* ((commit "7044125ac55056f2663536f7137170edf92ebd75")
          ;; Version is 0.2.4 in the version file in the repo
