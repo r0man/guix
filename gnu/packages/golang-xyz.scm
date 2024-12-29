@@ -8283,6 +8283,32 @@ similar string with weeks or days too.")
 Golang.")
     (license license:bsd-3)))
 
+(define-public go-github-com-yudai-golcs
+  (let ((commit "ecda9a501e8220fae3b4b600c3db4b0ba22cfc68")
+        (revision "0"))
+    (package
+      (name "go-github-com-yudai-golcs")
+      (version (git-version "0.0.0" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/yudai/golcs")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "0mx6wc5fz05yhvg03vvps93bc5mw4vnng98fhmixd47385qb29pq"))))
+      (build-system go-build-system)
+      (arguments
+       (list
+        #:import-path "github.com/yudai/golcs"))
+      (home-page "https://github.com/yudai/golcs")
+      (synopsis "Calculate @acronym{LCS, longest common sequence} in Golang")
+      (description
+       "This package provides functions to calculate @acronym{LCS, longest
+common sequence} values from two arbitrary arrays.")
+      (license license:expat))))
+
 (define-public go-github-com-yuin-gopher-lua
   (package
     (name "go-github-com-yuin-gopher-lua")
