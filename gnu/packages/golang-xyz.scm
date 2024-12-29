@@ -4495,6 +4495,19 @@ and stop units of work, which may receive @code{Close} signals from many clients
 with an emphasis on customization.")
     (license license:expat)))
 
+(define-public go-github-com-jedib0t-go-pretty-progress
+  (package
+    (inherit go-github-com-jedib0t-go-pretty-list)
+    (name "go-github-com-jedib0t-go-pretty-progress")
+    (arguments
+     (list
+      #:import-path "github.com/jedib0t/go-pretty/progress"
+      #:unpack-path "github.com/jedib0t/go-pretty"))
+    (synopsis "Utilities to prettify console output of progress bars")
+    (description
+     "This package provides utilities to prettify console output of progress
+bars with an emphasis on customization.")))
+
 (define-public go-github-com-jinzhu-copier
   (package
     (name "go-github-com-jinzhu-copier")
