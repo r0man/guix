@@ -7204,6 +7204,33 @@ synchronizing plain text:
 @end itemize")
     (license license:expat)))
 
+(define-public go-github-com-sergi-go-diff-diffmatchpatch
+  (package
+    (name "go-github-com-sergi-go-diff-diffmatchpatch")
+    (version "1.3.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/sergi/go-diff")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0c7lsa3kjxbrx66r93d0pvx1408b80ignpi39fzka1qc0ylshw32"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/sergi/go-diff/diffmatchpatch"
+      #:unpack-path "github.com/sergi/go-diff"))
+    (propagated-inputs (list go-github-com-stretchr-testify))
+    (home-page "https://github.com/sergi/go-diff")
+    (synopsis "Diff, match and patch text in Golang")
+    (description
+     "This package provides algorithms to perform operations to synchronizing
+plain text, like comparing two texts and return their differences, perform
+fuzzy matching of text, and applying patches onto text.")
+    (license license:expat)))
+
 (define-public go-github-com-sevlyar-go-daemon
   (package
     (name "go-github-com-sevlyar-go-daemon")
