@@ -3868,6 +3868,28 @@ underneath and returns only matching files or direcories, depending on the
 configuration.")
     (license license:expat)))
 
+(define-public go-github-com-guptarohit-asciigraph
+  (package
+    (name "go-github-com-guptarohit-asciigraph")
+    (version "0.7.3")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/guptarohit/asciigraph")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1j708hj80hk1b39zbdfx6kqy75i70jhz55bml0jngqwfx698d1pv"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/guptarohit/asciigraph"))
+    (home-page "https://github.com/guptarohit/asciigraph")
+    (synopsis "ASCII line graphs for Golang")
+    (description "This package can generate ASCII line graphs in Golang.")
+    (license license:bsd-3)))
+
 (define-public go-github-com-hashicorp-errwrap
   (package
     (name "go-github-com-hashicorp-errwrap")
