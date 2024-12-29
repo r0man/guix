@@ -4464,6 +4464,37 @@ and stop units of work, which may receive @code{Close} signals from many clients
      "NLP-related string utility functions for Golang.")
     (license license:expat)))
 
+(define-public go-github-com-jedib0t-go-pretty-list
+  (package
+    (name "go-github-com-jedib0t-go-pretty-list")
+    (version "6.6.5")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/jedib0t/go-pretty")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0sy8fia04lxi07yga7z3h3fp19y4bla5p16v1n7ldip0ymdmvjnx"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/jedib0t/go-pretty/list"
+      #:unpack-path "github.com/jedib0t/go-pretty"))
+    (propagated-inputs (list go-golang-org-x-text
+                             go-golang-org-x-term
+                             go-golang-org-x-sys
+                             go-github-com-stretchr-testify
+                             go-github-com-pkg-profile
+                             go-github-com-mattn-go-runewidth))
+    (home-page "https://github.com/jedib0t/go-pretty")
+    (synopsis "Utilities to prettify console output of lists")
+    (description
+     "This package provides utilities to prettify console output of lists
+with an emphasis on customization.")
+    (license license:expat)))
+
 (define-public go-github-com-jinzhu-copier
   (package
     (name "go-github-com-jinzhu-copier")
