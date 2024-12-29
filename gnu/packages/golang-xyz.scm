@@ -1417,6 +1417,31 @@ common routines for Golang projects via modular Makefiles and GitHub
 Actions.")
     (license license:expat)))
 
+(define-public go-github-com-bool64-shared
+  (package
+    (name "go-github-com-bool64-shared")
+    (version "0.1.5")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/bool64/shared")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "157k7vw9cq84i5yy8bab8n1dk2lc9cmz8kjjy710ic9lwridmnf8"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/bool64/shared"))
+    (propagated-inputs (list go-github-com-stretchr-testify
+                             go-github-com-bool64-dev))
+    (home-page "https://github.com/bool64/shared")
+    (synopsis "Share variables between test helpers in Golang")
+    (description "This package provides a contract to share variables between
+test helpers in Golang.")
+    (license license:expat)))
+
 (define-public go-github-com-briandowns-spinner
   (package
     (name "go-github-com-briandowns-spinner")
