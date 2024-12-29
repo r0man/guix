@@ -143,6 +143,7 @@
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages golang-build)
+  #:use-module (gnu packages golang-check)
   #:use-module (gnu packages golang-compression)
   #:use-module (gnu packages golang-xyz)
   #:use-module (gnu packages groff)
@@ -176,6 +177,7 @@
   #:use-module (gnu packages perl-check)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages polkit)
+  #:use-module (gnu packages prometheus)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-crypto)
@@ -6149,6 +6151,36 @@ attempts, it cannot eliminate the risk presented by weak authentication.  Set
 up services to use only two factor, or public/private authentication
 mechanisms if you really want to protect services.")
     (license license:gpl2+)))
+
+(define-public go-github-com-hetznercloud-hcloud-go
+  (package
+    (name "go-github-com-hetznercloud-hcloud-go")
+    (version "2.17.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/hetznercloud/hcloud-go")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0rmrp100clcymz6j741dpvx217d6ljnfqn9qfndlmy9rwi64ih8h"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/hetznercloud/hcloud-go/v2/hcloud"
+      #:unpack-path "github.com/hetznercloud/hcloud-go/v2"))
+    (propagated-inputs (list go-golang-org-x-net
+                             go-golang-org-x-crypto
+                             go-github-com-vburenin-ifacemaker
+                             go-github-com-stretchr-testify
+                             go-github-com-prometheus-client-golang
+                             go-github-com-jmattheis-goverter
+                             go-github-com-google-go-cmp))
+    (home-page "https://github.com/hetznercloud/hcloud-go")
+    (synopsis "Golang library for the Hetzner Cloud API")
+    (description "This package provides a library for the Hetzner Cloud API.")
+    (license license:expat)))
 
 (define-public restartd
   (let* ((commit "7044125ac55056f2663536f7137170edf92ebd75")
