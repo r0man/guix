@@ -7536,6 +7536,35 @@ slices, JSON and other data.")
      "Go library for loading environment variables from files")
     (license license:expat)))
 
+(define-public go-github-com-swaggest-assertjson
+  (package
+    (name "go-github-com-swaggest-assertjson")
+    (version "1.9.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/swaggest/assertjson")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0smxcs548dnchqqk4bys167xaawzz125qsvlvpa267fkhqrxk7f9"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:tests? #f
+      #:import-path "github.com/swaggest/assertjson"))
+    (propagated-inputs (list go-github-com-yudai-gojsondiff
+                             go-github-com-yosuke-furukawa-json5
+                             go-github-com-stretchr-testify
+                             go-github-com-iancoleman-orderedmap
+                             go-github-com-bool64-shared
+                             go-github-com-bool64-dev))
+    (home-page "https://github.com/swaggest/assertjson")
+    (synopsis "JSON equality assertions for Golang")
+    (description "This package provides JSON equality assertions for Golang.")
+    (license license:expat)))
+
 (define-public go-github-com-syndtr-goleveldb
   (package
     (name "go-github-com-syndtr-goleveldb")
