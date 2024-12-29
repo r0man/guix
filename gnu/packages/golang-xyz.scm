@@ -7776,6 +7776,35 @@ supported by the time package
 @end itemize")
     (license license:expat)))
 
+(define-public go-github-com-vburenin-ifacemaker
+  (package
+    (name "go-github-com-vburenin-ifacemaker")
+    (version "1.2.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/vburenin/ifacemaker")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "00031373i4xqrsaf7yv93czfmcf5qzn94mmqwamyjd6gpq37p1hl"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/vburenin/ifacemaker"))
+    (propagated-inputs (list go-golang-org-x-tools
+                             go-github-com-stretchr-testify
+                             go-github-com-jessevdk-go-flags))
+    (home-page "https://github.com/vburenin/ifacemaker")
+    (synopsis "Generate interfaces from structure methods in Golang")
+    (description
+     "This is a development helper program that generates a Golang interface
+by inspecting the structure methods of an existing @@code{.go} file.  The
+primary use case is to generate interfaces for gomock, so that gomock can
+generate mocks from those interfaces.")
+    (license license:asl2.0)))
+
 (define-public go-github-com-vitrun-qart
   (let ((commit "bf64b92db6b05651d6c25a3dabf2d543b360c0aa")
         (revision "0"))
