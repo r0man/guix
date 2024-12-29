@@ -8233,6 +8233,29 @@ similar string with weeks or days too.")
      "This package provides a simple ASCII tree composing tool.")
     (license license:expat)))
 
+(define-public go-github-com-yosuke-furukawa-json5
+  (package
+    (name "go-github-com-yosuke-furukawa-json5")
+    (version "0.1.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/yosuke-furukawa/json5")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1bcghdrx66v65bxlhfq9dvhbicnps9110wxza1gd5wx9x121mbr9"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/yosuke-furukawa/json5"))
+    (home-page "https://github.com/yosuke-furukawa/json5")
+    (synopsis "JSON5 implemented in Golang")
+    (description "This package provides an implementation of JSON5 for
+Golang.")
+    (license license:bsd-3)))
+
 (define-public go-github-com-yuin-gopher-lua
   (package
     (name "go-github-com-yuin-gopher-lua")
