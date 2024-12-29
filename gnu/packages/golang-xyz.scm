@@ -4521,6 +4521,18 @@ bars with an emphasis on customization.")))
      "This package provides utilities to prettify console output of tables
 with an emphasis on customization.")))
 
+(define-public go-github-com-jedib0t-go-pretty-text
+  (package
+    (inherit go-github-com-jedib0t-go-pretty-list)
+    (name "go-github-com-jedib0t-go-pretty-text")
+    (arguments
+     (list
+      #:import-path "github.com/jedib0t/go-pretty/text"
+      #:unpack-path "github.com/jedib0t/go-pretty"))
+    (synopsis "Utilities to prettify console output of text")
+    (description "This package provides utilities to prettify console output
+of text with an emphasis on customization.")))
+
 (define-public go-github-com-jinzhu-copier
   (package
     (name "go-github-com-jinzhu-copier")
