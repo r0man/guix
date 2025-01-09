@@ -1966,7 +1966,7 @@ bindings to the @code{yaml-cpp} C++ library.")
 (define-public guile-dbi
   (package
     (name "guile-dbi")
-    (version "2.1.8")
+    (version "2.1.9")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -1975,7 +1975,7 @@ bindings to the @code{yaml-cpp} C++ library.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "123m4j82bi60s1v95pjh4djb7bh6zdwmljbpyg7zq8ni2gyal7lw"))))
+                "1i0vsg173499jsvimzqb81lqrw6r8l77qkjmsdha442r933nq473"))))
     (build-system gnu-build-system)
     (arguments
      `(#:modules (((guix build guile-build-system)
@@ -1983,17 +1983,25 @@ bindings to the @code{yaml-cpp} C++ library.")
                   ,@%default-gnu-modules)
        #:imported-modules ((guix build guile-build-system)
                            ,@%default-gnu-imported-modules)
-       #:configure-flags
-       (list (string-append
-              "--with-guile-site-dir=" %output "/share/guile/site/"
-              (target-guile-effective-version (assoc-ref %build-inputs "guile"))))
        #:phases
        (modify-phases %standard-phases
+         (add-after 'unpack 'set-guile-site
+           (lambda _
+             (setenv "GUILE_SITE"
+                     (string-append
+                       %output "/share/guile/site/"
+                       (target-guile-effective-version
+                        (assoc-ref %build-inputs "guile"))))))
          (add-after 'unpack 'chdir
            (lambda _
              ;; The upstream Git repository contains all the code, so change
              ;; to the directory specific to guile-dbi.
              (chdir "guile-dbi")))
+         (add-after 'chdir 'patch-subdirs
+           (lambda _
+             (substitute* "Makefile.am"
+               (("SUBDIRS = libltdl src include")
+                "SUBDIRS = src include"))))
          (add-after 'install 'patch-extension-path
            (lambda* (#:key inputs outputs #:allow-other-keys)
              (let* ((out (assoc-ref outputs "out"))
@@ -2004,9 +2012,9 @@ bindings to the @code{yaml-cpp} C++ library.")
                     (ext (string-append out "/lib/libguile-dbi")))
                (substitute* dbi.scm (("libguile-dbi") ext))))))))
     (native-inputs
-     (list autoconf automake libtool perl texinfo))
+     (list autoconf automake libtool libltdl perl pkg-config texinfo))
     (propagated-inputs
-     (list guile-2.2))
+     (list guile-3.0))
     (synopsis "Guile database abstraction layer")
     (home-page "https://github.com/opencog/guile-dbi")
     (description
@@ -2033,7 +2041,8 @@ It currently supports MySQL, Postgres and SQLite3.")
                ;; The upstream Git repository contains all the code, so change
                ;; to the directory specific to guile-dbd-sqlite3.
                (chdir "guile-dbd-sqlite3")))
-           (delete 'patch-extension-path)))))
+           (delete 'patch-extension-path)
+           (delete 'patch-subdirs)))))
     (inputs
      (list sqlite zlib))
     (native-inputs
@@ -2062,9 +2071,10 @@ SQL databases.  This package implements the interface for SQLite.")))
              (lambda _
                (substitute* "src/guile-dbd-postgresql.c"
                  (("postgresql/libpq-fe\\.h") "libpq-fe.h"))))
-           (delete 'patch-extension-path)))))
+           (delete 'patch-extension-path)
+           (delete 'patch-subdirs)))))
     (inputs
-     (list postgresql zlib))
+     (list postgresql openssl zlib))
     (native-inputs
      (modify-inputs (package-native-inputs guile-dbi)
        (prepend guile-dbi ; only required for headers
@@ -2094,7 +2104,8 @@ PostgreSQL.")))
                  (("mariadbclient") "mariadb"))
                (substitute* "src/guile-dbd-mysql.c"
                  (("<mariadb/") "<mysql/"))))
-           (delete 'patch-extension-path)))))
+           (delete 'patch-extension-path)
+           (delete 'patch-subdirs)))))
     (inputs
      (list `(,mariadb "dev")
            `(,mariadb "lib") zlib))
