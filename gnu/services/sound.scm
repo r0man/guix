@@ -35,6 +35,7 @@
   #:use-module (gnu packages audio)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages pulseaudio)
+  #:use-module (gnu packages rust-apps)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:export (alsa-configuration
@@ -56,7 +57,15 @@
             ladspa-configuration
             ladspa-configuration?
             ladspa-configuration-plugins
-            ladspa-service-type))
+            ladspa-service-type
+
+            speakersafetyd-configuration
+            speakersafetyd-configuration-blackbox-path
+            speakersafetyd-configuration-config-path
+            speakersafetyd-configuration-max-reduction
+            speakersafetyd-configuration-package
+            speakersafetyd-configuration?
+            speakersafetyd-service-type))
 
 ;;; Commentary:
 ;;;
@@ -262,5 +271,55 @@ computed-file object~%") file))))
                              ladspa-environment)))
    (default-value (ladspa-configuration))
    (description "Configure LADSPA plugins.")))
+
+
+;;;
+;;; Speaker Safety Daemon
+;;;
+
+(define-record-type* <speakersafetyd-configuration>
+  speakersafetyd-configuration
+  make-speakersafetyd-configuration
+  speakersafetyd-configuration?
+  (blackbox-path speakersafetyd-configuration-blackbox-path
+                 (default "/var/lib/speakersafetyd/blackbox"))
+  (config-path speakersafetyd-configuration-config-path
+               (default (file-append speakersafetyd "/usr/share/speakersafetyd")))
+  (max-reduction speakersafetyd-configuration-max-reduction
+                 (default 7))
+  (package speakersafetyd-configuration-package
+           (default speakersafetyd)))
+
+(define (speakersafetyd-shepherd-service config)
+  (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
+        (config-path (speakersafetyd-configuration-config-path config))
+        (max-reduction (speakersafetyd-configuration-max-reduction config))
+        (package (speakersafetyd-configuration-package config)))
+    (shepherd-service
+     (documentation "Speaker saftey daemon")
+     (provision '(speakersafetyd))
+     (requirement '(udev))
+     (start #~(make-forkexec-constructor
+               (list #$(file-append package "/bin/speakersafetyd")
+                     "--config-path" #$config-path
+                     "--blackbox-path" #$blackbox-path
+                     "--max-reduction" (number->string #$max-reduction))))
+     (stop #~(make-kill-destructor)))))
+
+(define speakersafetyd-service-type
+  (service-type
+   (name 'speakersafetyd)
+   (description "Speaker Saftey Daemon")
+   (extensions
+    (list (service-extension
+           profile-service-type
+           (compose list speakersafetyd-configuration-package))
+          (service-extension
+           shepherd-root-service-type
+           (compose list speakersafetyd-shepherd-service))
+          (service-extension
+           udev-service-type
+           (compose list speakersafetyd-configuration-package))))
+   (default-value (speakersafetyd-configuration))))
 
 ;;; sound.scm ends here
