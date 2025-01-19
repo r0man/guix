@@ -49,12 +49,10 @@
   #:use-module (ice-9 iconv)
   #:use-module (ice-9 match)
   #:use-module (ice-9 popen)
-  #:use-module (ice-9 pretty-print)
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 string-fun)
   #:use-module (ice-9 textual-ports)
   #:use-module (json)
-  #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-2)
   #:use-module (srfi srfi-34)
@@ -66,10 +64,6 @@
   #:use-module (ssh session)
   #:use-module (ssh sftp)
   #:use-module (ssh shell)
-  #:use-module (web client)
-  #:use-module (web request)
-  #:use-module (web response)
-  #:use-module (web uri)
   #:export (%hetzner-os-arm
             %hetzner-os-x86
             deploy-hetzner
