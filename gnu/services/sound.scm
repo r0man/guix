@@ -32,6 +32,7 @@
   #:use-module (guix records)
   #:use-module (guix store)
   #:use-module (guix ui)
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages audio)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages pulseaudio)
@@ -281,29 +282,53 @@ computed-file object~%") file))))
   speakersafetyd-configuration
   make-speakersafetyd-configuration
   speakersafetyd-configuration?
-  (blackbox-path speakersafetyd-configuration-blackbox-path
+  (blackbox-path speakersafetyd-configuration-blackbox-path ; string
                  (default "/var/lib/speakersafetyd/blackbox"))
-  (config-path speakersafetyd-configuration-config-path
+  (config-path speakersafetyd-configuration-config-path ; string
                (default (file-append speakersafetyd "/usr/share/speakersafetyd")))
-  (max-reduction speakersafetyd-configuration-max-reduction
+  (group speakersafetyd-configuration-group ; string
+         (default "speakersafetyd"))
+  (home-service? speakersafetyd-configuration-home-service? ; boolean
+                 (default for-home?) (innate))
+  (max-reduction speakersafetyd-configuration-max-reduction ; integer
                  (default 7))
-  (package speakersafetyd-configuration-package
-           (default speakersafetyd)))
+  (package speakersafetyd-configuration-package ; package
+           (default speakersafetyd))
+  (user speakersafetyd-configuration-user ; string
+        (default "speakersafetyd")))
+
+(define (speakersafetyd-accounts config)
+  (list (user-group
+         (name (speakersafetyd-configuration-group config))
+         (system? #t))
+        (user-account
+         (name (speakersafetyd-configuration-user config))
+         (group (speakersafetyd-configuration-group config))
+         (system? #t)
+         (home-directory "/var/empty")
+         (shell (file-append shadow "/sbin/nologin")))))
 
 (define (speakersafetyd-shepherd-service config)
   (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
         (config-path (speakersafetyd-configuration-config-path config))
+        (group (speakersafetyd-configuration-group config))
+        (home-service? (speakersafetyd-configuration-home-service? config))
         (max-reduction (speakersafetyd-configuration-max-reduction config))
-        (package (speakersafetyd-configuration-package config)))
+        (package (speakersafetyd-configuration-package config))
+        (user (speakersafetyd-configuration-user config)))
     (shepherd-service
-     (documentation "Speaker saftey daemon")
+     (documentation "Run the speaker saftey daemon")
      (provision '(speakersafetyd))
-     (requirement '(udev))
+     (requirement (if home-service?
+                      '(udev)
+                      '(udev user-processes)))
      (start #~(make-forkexec-constructor
                (list #$(file-append package "/bin/speakersafetyd")
                      "--config-path" #$config-path
                      "--blackbox-path" #$blackbox-path
-                     "--max-reduction" (number->string #$max-reduction))))
+                     "--max-reduction" (number->string #$max-reduction))
+               #:user #$(and (not home-service?) user)
+               #:group #$(and (not home-service?) group)))
      (stop #~(make-kill-destructor)))))
 
 (define speakersafetyd-service-type
@@ -312,6 +337,9 @@ computed-file object~%") file))))
    (description "Speaker Saftey Daemon")
    (extensions
     (list (service-extension
+           account-service-type
+           speakersafetyd-accounts)
+          (service-extension
            profile-service-type
            (compose list speakersafetyd-configuration-package))
           (service-extension

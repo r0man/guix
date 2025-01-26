@@ -19,12 +19,14 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gnu home services sound)
+  #:use-module ((gnu system shadow) #:select (account-service-type))
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services xdg)
   #:use-module (gnu packages linux)
   #:use-module (gnu services configuration)
   #:use-module (gnu services sound)
+  #:use-module (gnu services)
   #:use-module (guix records)
   #:use-module (guix gexp)
   #:use-module (srfi srfi-1)
@@ -272,7 +274,10 @@ another PulseAudio instance.")
 
 (define home-speakersafetyd-service-type
   (service-type
-   (inherit (system->home-service-type speakersafetyd-service-type))
+   (inherit (system->home-service-type
+             (remove-service-extensions
+              speakersafetyd-service-type
+              (list account-service-type))))
    (default-value (home-speakersafetyd-configuration))))
 
 (define-service-type-mapping
