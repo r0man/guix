@@ -61,6 +61,8 @@
             ladspa-service-type
 
             speakersafetyd-configuration
+            speakersafetyd-configuration-alsa-lib
+            speakersafetyd-configuration-alsa-utils
             speakersafetyd-configuration-blackbox-path
             speakersafetyd-configuration-config-path
             speakersafetyd-configuration-max-reduction
@@ -292,6 +294,10 @@ computed-file object~%") file))))
                  (default for-home?) (innate))
   (max-reduction speakersafetyd-configuration-max-reduction ; integer
                  (default 7))
+  (alsa-lib speakersafetyd-configuration-alsa-lib ; package
+              (default alsa-lib))
+  (alsa-utils speakersafetyd-configuration-alsa-utils ; package
+              (default alsa-utils))
   (package speakersafetyd-configuration-package ; package
            (default speakersafetyd))
   (user speakersafetyd-configuration-user ; string
@@ -336,7 +342,9 @@ computed-file object~%") file))))
      (stop #~(make-kill-destructor)))))
 
 (define (speakersafetyd-profile config)
-  (list alsa-utils (speakersafetyd-configuration-package config)))
+  (list (speakersafetyd-configuration-alsa-lib config)
+        (speakersafetyd-configuration-alsa-utils config)
+        (speakersafetyd-configuration-package config)))
 
 (define speakersafetyd-service-type
   (service-type
@@ -348,9 +356,7 @@ computed-file object~%") file))))
            speakersafetyd-accounts)
           (service-extension
            profile-service-type
-           speakersafetyd-profile
-           ;; (compose list speakersafetyd-configuration-package)
-           )
+           speakersafetyd-profile)
           (service-extension
            shepherd-root-service-type
            (compose list speakersafetyd-shepherd-service))
