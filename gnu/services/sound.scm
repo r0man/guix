@@ -328,6 +328,7 @@ computed-file object~%") file))))
                      "--config-path" #$config-path
                      "--blackbox-path" #$blackbox-path
                      "--max-reduction" (number->string #$max-reduction))
+               #:environment-variables (default-environment-variables)
                #:user #$(and (not home-service?) user)
                #:group #$(and (not home-service?) group)))
      (stop #~(make-kill-destructor)))))
