@@ -321,7 +321,7 @@ computed-file object~%") file))))
      (documentation "Run the speaker saftey daemon")
      (provision '(speakersafetyd))
      (requirement (if home-service?
-                      '(udev)
+                      '()
                       '(udev user-processes)))
      (start #~(make-forkexec-constructor
                (list #$(file-append package "/bin/speakersafetyd")
