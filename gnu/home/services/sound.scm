@@ -270,7 +270,8 @@ another PulseAudio instance.")
 (define-syntax-rule (home-speakersafetyd-configuration fields ...)
   (for-home (speakersafetyd-configuration
              (inherit (speakersafetyd-configuration
-                       (blackbox-path "~/.local/state/speakersafetyd/blackbox")))
+                       (blackbox-path "~/.local/state/speakersafetyd/blackbox")
+                       (log-file #~(string-append %user-log-dir "/speakersafetyd.log"))))
              fields ...)))
 
 (define home-speakersafetyd-service-type

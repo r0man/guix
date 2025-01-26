@@ -65,6 +65,7 @@
             speakersafetyd-configuration-alsa-utils
             speakersafetyd-configuration-blackbox-path
             speakersafetyd-configuration-config-path
+            speakersafetyd-configuration-log-file
             speakersafetyd-configuration-max-reduction
             speakersafetyd-configuration-package
             speakersafetyd-configuration?
@@ -298,6 +299,8 @@ computed-file object~%") file))))
               (default alsa-lib))
   (alsa-utils speakersafetyd-configuration-alsa-utils ; package
               (default alsa-utils))
+  (log-file speakersafetyd-configuration-log-file ; string
+            (default "/var/log/speakersafetyd.log"))
   (package speakersafetyd-configuration-package ; package
            (default speakersafetyd))
   (user speakersafetyd-configuration-user ; string
@@ -320,15 +323,15 @@ computed-file object~%") file))))
         (config-path (speakersafetyd-configuration-config-path config))
         (group (speakersafetyd-configuration-group config))
         (home-service? (speakersafetyd-configuration-home-service? config))
+        (log-file (speakersafetyd-configuration-log-file config))
         (max-reduction (speakersafetyd-configuration-max-reduction config))
         (package (speakersafetyd-configuration-package config))
         (user (speakersafetyd-configuration-user config)))
     (shepherd-service
      (documentation "Run the speaker saftey daemon")
+     (modules '((shepherd support)))
      (provision '(speakersafetyd))
-     (requirement (if home-service?
-                      '()
-                      '(udev user-processes)))
+     (requirement (if home-service? '() '(udev user-processes)))
      (start #~(make-forkexec-constructor
                (list #$(file-append package "/bin/speakersafetyd")
                      "--config-path" #$config-path
@@ -338,6 +341,7 @@ computed-file object~%") file))))
                (cons "ALSA_CONFIG_UCM2=/gnu/store/d980iyfbg2098y801m3b3568s975q86z-asahi-alsa-ucm-conf-5/share/alsa/ucm2"
                      (default-environment-variables))
                #:directory "/"
+               #:log-file #$log-file
                #:group #$(and (not home-service?) group)
                #:supplementary-groups '#$(if home-service? '() '("audio"))
                #:user #$(and (not home-service?) user)))
