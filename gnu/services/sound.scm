@@ -331,12 +331,8 @@ computed-file object~%") file))))
                      "--config-path" #$config-path
                      "--blackbox-path" #$blackbox-path
                      "--max-reduction" (number->string #$max-reduction))
-               #:environment-variables
-               (cons "ALSA_CONFIG_UCM2=/gnu/store/d980iyfbg2098y801m3b3568s975q86z-asahi-alsa-ucm-conf-5/share/alsa/ucm2"
-                     (default-environment-variables))
-               #:directory "/"
-               #:log-file #$log-file
                #:group #$(and (not home-service?) group)
+               #:log-file #$log-file
                #:supplementary-groups '#$(if home-service? '() '("audio"))
                #:user #$(and (not home-service?) user)))
      (stop #~(make-kill-destructor)))))
