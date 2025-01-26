@@ -2,6 +2,7 @@
 ;;; Copyright © 2023 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2023 Brian Cully <bjc@spork.org>
 ;;; Copyright © 2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2025 Roman Scherer <roman@burningswell.com>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
