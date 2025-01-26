@@ -315,6 +315,7 @@ computed-file object~%") file))))
 
 (define (speakersafetyd-activation config)
   (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
+        (home-service? (speakersafetyd-configuration-home-service? config))
         (user (speakersafetyd-configuration-user config)))
     (with-imported-modules (source-module-closure
                             '((gnu build activation)
@@ -322,7 +323,9 @@ computed-file object~%") file))))
       #~(begin
           (use-modules (gnu build activation)
                        (guix build utils))
-          (let ((user (getpwnam #$user)))
+          (let ((user (if #$home-service?
+                          (getpw (getuid))
+                          (getpwnam #$user))))
             (mkdir-p/perms #$blackbox-path user #o755))))))
 
 (define (speakersafetyd-shepherd-service config)
