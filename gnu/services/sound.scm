@@ -322,9 +322,7 @@ computed-file object~%") file))))
                             '((gnu build activation)
                               (guix build utils)))
       #~(begin
-          (format #t "ACTIVATE Creating directory ~a~%" #$blackbox-path)
-          (use-modules (gnu build activation)
-                       (guix build utils))
+          (use-modules (gnu build activation))
           (let ((user (if #$home-service?
                           (getpw (getuid))
                           (getpwnam #$user))))
