@@ -335,7 +335,7 @@ computed-file object~%") file))))
                      "--blackbox-path" #$blackbox-path
                      "--max-reduction" (number->string #$max-reduction))
                #:environment-variables
-               (cons "RUST_BACKTRACE=full"
+               (cons "ALSA_CONFIG_UCM2=/gnu/store/d980iyfbg2098y801m3b3568s975q86z-asahi-alsa-ucm-conf-5/share/alsa/ucm2"
                      (default-environment-variables))
                #:directory "/"
                #:group #$(and (not home-service?) group)
