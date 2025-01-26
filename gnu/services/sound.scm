@@ -313,7 +313,7 @@ computed-file object~%") file))))
          (system? #t)
          (home-directory "/var/empty")
          (shell (file-append shadow "/sbin/nologin"))
-         (supplementary-groups '("audio" "cgroup" "docker" "libvirt" "lp" "netdev" "plugdev" "video" "wheel")))))
+         (supplementary-groups '("audio")))))
 
 (define (speakersafetyd-shepherd-service config)
   (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
@@ -339,7 +339,7 @@ computed-file object~%") file))))
                      (default-environment-variables))
                #:directory "/"
                #:group #$(and (not home-service?) group)
-               #:supplementary-groups '#$(if home-service? '() '("audio" "cgroup" "docker" "libvirt" "lp" "netdev" "plugdev" "video" "wheel"))
+               #:supplementary-groups '#$(if home-service? '() '("audio"))
                #:user #$(and (not home-service?) user)))
      (stop #~(make-kill-destructor)))))
 
