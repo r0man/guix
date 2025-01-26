@@ -312,6 +312,12 @@ computed-file object~%") file))))
          (shell (file-append shadow "/sbin/nologin"))
          (supplementary-groups '("audio")))))
 
+(define (speakersafetyd-activation config)
+  (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config)))
+    #~(begin
+        (use-modules (guix build utils))
+        (mkdir-p #$blackbox-path))))
+
 (define (speakersafetyd-shepherd-service config)
   (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
         (config-path (speakersafetyd-configuration-config-path config))
@@ -343,6 +349,9 @@ computed-file object~%") file))))
    (description "Speaker Saftey Daemon")
    (extensions
     (list (service-extension
+           activation-service-type
+           speakersafetyd-activation)
+          (service-extension
            account-service-type
            speakersafetyd-accounts)
           (service-extension
