@@ -329,7 +329,7 @@ computed-file object~%") file))))
                      "--blackbox-path" #$blackbox-path
                      "--max-reduction" (number->string #$max-reduction))
                #:environment-variables
-               (cons "RUST_BACKTRACE=1"
+               (cons "RUST_BACKTRACE=full"
                      (default-environment-variables))
                #:user #$(and (not home-service?) user)
                #:group #$(and (not home-service?) group)))
