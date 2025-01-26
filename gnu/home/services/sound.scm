@@ -24,6 +24,7 @@
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services xdg)
   #:use-module (gnu packages linux)
+  #:use-module (gnu services base)
   #:use-module (gnu services configuration)
   #:use-module (gnu services sound)
   #:use-module (gnu services)
@@ -277,7 +278,7 @@ another PulseAudio instance.")
    (inherit (system->home-service-type
              (remove-service-extensions
               speakersafetyd-service-type
-              (list account-service-type))))
+              (list account-service-type udev-service-type))))
    (default-value (home-speakersafetyd-configuration))))
 
 (define-service-type-mapping
