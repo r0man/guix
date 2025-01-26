@@ -28,6 +28,7 @@
   #:use-module (gnu system shadow)
   #:use-module (guix diagnostics)
   #:use-module (guix gexp)
+  #:use-module (guix modules)
   #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (guix store)
@@ -313,10 +314,16 @@ computed-file object~%") file))))
          (supplementary-groups '("audio")))))
 
 (define (speakersafetyd-activation config)
-  (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config)))
-    #~(begin
-        (use-modules (guix build utils))
-        (mkdir-p #$blackbox-path))))
+  (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
+        (user (speakersafetyd-configuration-user config)))
+    (with-imported-modules (source-module-closure
+                            '((gnu build activation)
+                              (guix build utils)))
+      #~(begin
+          (use-modules (gnu build activation)
+                       (guix build utils))
+          (let ((user (getpwnam #$user)))
+            (mkdir-p/perms #$blackbox-path user #o755))))))
 
 (define (speakersafetyd-shepherd-service config)
   (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
