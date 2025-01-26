@@ -61,8 +61,6 @@
             ladspa-service-type
 
             speakersafetyd-configuration
-            speakersafetyd-configuration-alsa-lib
-            speakersafetyd-configuration-alsa-utils
             speakersafetyd-configuration-blackbox-path
             speakersafetyd-configuration-config-path
             speakersafetyd-configuration-log-file
@@ -293,14 +291,10 @@ computed-file object~%") file))))
          (default "speakersafetyd"))
   (home-service? speakersafetyd-configuration-home-service? ; boolean
                  (default for-home?) (innate))
-  (max-reduction speakersafetyd-configuration-max-reduction ; integer
-                 (default 7))
-  (alsa-lib speakersafetyd-configuration-alsa-lib ; package
-              (default alsa-lib))
-  (alsa-utils speakersafetyd-configuration-alsa-utils ; package
-              (default alsa-utils))
   (log-file speakersafetyd-configuration-log-file ; string
             (default "/var/log/speakersafetyd.log"))
+  (max-reduction speakersafetyd-configuration-max-reduction ; integer
+                 (default 7))
   (package speakersafetyd-configuration-package ; package
            (default speakersafetyd))
   (user speakersafetyd-configuration-user ; string
@@ -347,11 +341,6 @@ computed-file object~%") file))))
                #:user #$(and (not home-service?) user)))
      (stop #~(make-kill-destructor)))))
 
-(define (speakersafetyd-profile config)
-  (list (speakersafetyd-configuration-alsa-lib config)
-        (speakersafetyd-configuration-alsa-utils config)
-        (speakersafetyd-configuration-package config)))
-
 (define speakersafetyd-service-type
   (service-type
    (name 'speakersafetyd)
@@ -362,7 +351,7 @@ computed-file object~%") file))))
            speakersafetyd-accounts)
           (service-extension
            profile-service-type
-           speakersafetyd-profile)
+           (compose list speakersafetyd-configuration-package))
           (service-extension
            shepherd-root-service-type
            (compose list speakersafetyd-shepherd-service))
