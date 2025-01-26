@@ -26466,8 +26466,8 @@ It provides a solution for safeguarding speakers against damage by
 dynamically managing the voltage and current across the speaker's voice
 coil.  This is particularly important for devices using fragile speaker
 elements, enabling them to deliver high-quality sound without risking
-permanent damage.  It is made by the @uref{https://asahilinux.org, Asahi
-Linux} project to protect the speakers on Apple Silicon devices.
+permanent damage.  It can be used with an @uref{https://asahilinux.org,
+Asahi Linux} kernel to protect the speakers on Apple Silicon devices.
 
 @defvar speakersafetyd-service-type
 This is the type for the @code{speakersafetyd} system service, whose
@@ -48233,8 +48233,8 @@ It provides a solution for safeguarding speakers against damage by
 dynamically managing the voltage and current across the speaker's voice
 coil.  This is particularly important for devices using fragile speaker
 elements, enabling them to deliver high-quality sound without risking
-permanent damage.  It is made by the @uref{https://asahilinux.org, Asahi
-Linux} project to protect the speakers on Apple Silicon devices.
+permanent damage.  It can be used with an @uref{https://asahilinux.org,
+Asahi Linux} kernel to protect the speakers on Apple Silicon devices.
 
 @defvar home-speakersafetyd-service-type
 This is the type for the @code{speakersafetyd} home service, whose value
