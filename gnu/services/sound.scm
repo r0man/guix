@@ -338,8 +338,9 @@ computed-file object~%") file))))
                (cons "RUST_BACKTRACE=full"
                      (default-environment-variables))
                #:directory "/"
-               #:user #$(and (not home-service?) user)
-               #:group #$(and (not home-service?) group)))
+               #:group #$(and (not home-service?) group)
+               #:supplementary-groups #$(if home-service? '() '("audio"))
+               #:user #$(and (not home-service?) user)))
      (stop #~(make-kill-destructor)))))
 
 (define (speakersafetyd-profile config)
