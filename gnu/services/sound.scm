@@ -335,6 +335,9 @@ computed-file object~%") file))))
                #:group #$(and (not home-service?) group)))
      (stop #~(make-kill-destructor)))))
 
+(define (speakersafetyd-profile config)
+  (list alsa-utils (speakersafetyd-configuration-package config)))
+
 (define speakersafetyd-service-type
   (service-type
    (name 'speakersafetyd)
@@ -345,7 +348,9 @@ computed-file object~%") file))))
            speakersafetyd-accounts)
           (service-extension
            profile-service-type
-           (compose list speakersafetyd-configuration-package))
+           speakersafetyd-profile
+           ;; (compose list speakersafetyd-configuration-package)
+           )
           (service-extension
            shepherd-root-service-type
            (compose list speakersafetyd-shepherd-service))
