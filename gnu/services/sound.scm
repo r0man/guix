@@ -337,6 +337,7 @@ computed-file object~%") file))))
                #:environment-variables
                (cons "RUST_BACKTRACE=full"
                      (default-environment-variables))
+               #:directory "/"
                #:user #$(and (not home-service?) user)
                #:group #$(and (not home-service?) group)))
      (stop #~(make-kill-destructor)))))
