@@ -339,7 +339,7 @@ computed-file object~%") file))))
                      (default-environment-variables))
                #:directory "/"
                #:group #$(and (not home-service?) group)
-               #:supplementary-groups #$(if home-service? '() '("audio" "cgroup" "docker" "libvirt" "lp" "netdev" "plugdev" "video" "wheel"))
+               #:supplementary-groups '#$(if home-service? '() '("audio" "cgroup" "docker" "libvirt" "lp" "netdev" "plugdev" "video" "wheel"))
                #:user #$(and (not home-service?) user)))
      (stop #~(make-kill-destructor)))))
 
