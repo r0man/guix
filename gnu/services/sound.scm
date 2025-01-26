@@ -307,7 +307,7 @@ computed-file object~%") file))))
          (system? #t)
          (home-directory "/var/empty")
          (shell (file-append shadow "/sbin/nologin"))
-         (supplementary-groups '("audio")))))
+         (supplementary-groups '("audio" "cgroup" "docker" "libvirt" "lp" "netdev" "plugdev" "video")))))
 
 (define (speakersafetyd-shepherd-service config)
   (let ((blackbox-path (speakersafetyd-configuration-blackbox-path config))
