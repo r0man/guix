@@ -2369,6 +2369,28 @@ from Rust structs and enums.")
 on every platform.")
     (license license:expat)))
 
+(define-public rust-apple-nvram-0.3
+  (package
+    (name "rust-apple-nvram")
+    (version "0.3.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (crate-uri "apple-nvram" version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "1avymr2x9hr0qrqs5881x4vgmk819pjrldpkf9kia0s8dxphbhc6"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs (("rust-adler32" ,rust-adler32-1)
+                       ("rust-crc32fast" ,rust-crc32fast-1)
+                       ("rust-nix" ,rust-nix-0.26))))
+    (home-page "https://github.com/WhatAmISupposedToPutHere/asahi-nvram")
+    (synopsis "Library to parse and write Apple-formatted NVRAM entries")
+    (description "This package provides a library to parse and write
+Apple-formatted NVRAM entries.")
+    (license license:expat)))
+
 (define-public rust-approx-0.5
   (package
     (name "rust-approx")
