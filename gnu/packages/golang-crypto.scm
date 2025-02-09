@@ -1234,6 +1234,30 @@ MurmurHash} revision (aka MurmurHash3).")))
 Stealing encryption and decryption methods.")
     (license license:asl2.0)))
 
+(define-public go-github-com-golang-jwt-jwt
+  (package
+    (name "go-github-com-golang-jwt-jwt")
+    (version "5.2.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/golang-jwt/jwt")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "13l2p4g9f7bpz0nf2sc4r5ms06ps7bs7z1vpzzv943q094pjs0yw"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/golang-jwt/jwt/cmd/jwt"
+      #:unpack-path "github.com/golang-jwt/jwt"))
+    (home-page "https://github.com/golang-jwt/jwt")
+    (synopsis "Go implementation of JSON Web Tokens")
+    (description "This package provides an implementation of JSON Web Tokens
+in Go.")
+    (license license:expat)))
+
 (define-public go-github-com-jzelinskie-whirlpool
   (package
     (name "go-github-com-jzelinskie-whirlpool")
