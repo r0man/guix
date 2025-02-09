@@ -1234,6 +1234,33 @@ MurmurHash} revision (aka MurmurHash3).")))
 Stealing encryption and decryption methods.")
     (license license:asl2.0)))
 
+(define-public go-github-com-jphastings-jwker
+  (package
+    (name "go-github-com-jphastings-jwker")
+    (version "0.2.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/jphastings/jwker")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0nb487c2cfazxwqghq5a8iz8gyi0hhajc39c260f0n6d3ib1798g"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/jphastings/jwker/cmd/jwker"
+      #:unpack-path "github.com/jphastings/jwker"))
+    (propagated-inputs (list go-github-com-stretchr-testify))
+    (home-page "https://github.com/jphastings/jwker")
+    (synopsis "Command line tool to easily convert keys between the PEM and
+JWK file formats")
+    (description "This package provides a command line tool to convert keys
+between the @acronym{PEM, Privacy-Enhanced Mail} and @acronym{JWK, JSON Web
+Key}file formats.")
+    (license license:expat)))
+
 (define-public go-github-com-jzelinskie-whirlpool
   (package
     (name "go-github-com-jzelinskie-whirlpool")
