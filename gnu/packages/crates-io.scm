@@ -3917,6 +3917,30 @@ the web.")
     ;; No copyright headers in the source code.  LICENSE indicates gpl3.
     (license license:gpl3)))
 
+(define-public rust-asahi-nvram-0.2
+  (package
+    (name "rust-asahi-nvram")
+    ;; Stay at 0.2.2 until Guix supports /dev/mtd/by-name/nvram paths.
+    ;; We need a newer version of eudev (> v3.2.14) for the following rules.
+    ;; https://github.com/eudev-project/eudev/blob/master/rules/60-persistent-storage-mtd.rules
+    (version "0.2.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (crate-uri "asahi-nvram" version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "0k1slgayjxf4pz6f44gckqwh44wk1n0iln6s3008x8rxxvsmxqac"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs (("rust-apple-nvram" ,rust-apple-nvram-0.3)
+                       ("rust-clap" ,rust-clap-3))))
+    (home-page "https://github.com/WhatAmISupposedToPutHere/asahi-nvram")
+    (synopsis "Tool to read and write NVRAM variables on ARM Macs")
+    (description "This package provides a tool to read and write NVRAM
+variables on ARM Macs.")
+    (license license:expat)))
+
 (define-public rust-as-derive-utils-0.11
   (package
     (name "rust-as-derive-utils")
