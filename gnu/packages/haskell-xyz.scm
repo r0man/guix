@@ -16210,13 +16210,13 @@ and generalised mapMaybe, catMaybes, filter")
 (define-public ghc-hspec-discover
   (package
     (name "ghc-hspec-discover")
-    (version "2.9.7")
+    (version "2.11.11")
     (source (origin
               (method url-fetch)
               (uri (hackage-uri "hspec-discover" version))
               (sha256
                (base32
-                "0536kdxjw6p8b6gcwvmr22jbmb6cgzbddi0fkd01b2m847z37sb5"))))
+                "15999znqr89fggfw6l59p4scsv7ljcdp99dhnvbk4mhpb4mx9ak8"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "hspec-discover")))
     (native-inputs (list ghc-quickcheck ghc-hspec-meta ghc-mockery))
