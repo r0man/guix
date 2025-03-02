@@ -3345,6 +3345,14 @@ Dual to @code{Traversable}.")
     (properties '((upstream-name . "dlist")))
     (inputs
      (list ghc-quickcheck))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "dlist.cabal"
+               (("QuickCheck .*>= 2.10.*")
+                "QuickCheck >= 2.10 && < 2.16\n")))))))
     (home-page "https://github.com/spl/dlist")
     (synopsis "Difference lists")
     (description
