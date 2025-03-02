@@ -1796,13 +1796,13 @@ backend for the Charts library.")
 (define-public ghc-chasingbottoms
   (package
     (name "ghc-chasingbottoms")
-    (version "1.3.1.12")
+    (version "1.3.1.15")
     (source (origin
               (method url-fetch)
               (uri (hackage-uri "ChasingBottoms" version))
               (sha256
                (base32
-                "1vy9yq07p95qiap1pcp2bbbn1mqvp3spyrswpdz0qfcn06656650"))))
+                "0if8h6xq10y1xa90cwmx2jkxjn9628rzs8y6fsjmpjdcvcyr5wnj"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "ChasingBottoms")))
     (inputs (list ghc-quickcheck ghc-random ghc-syb))
