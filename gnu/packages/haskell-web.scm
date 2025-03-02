@@ -1088,7 +1088,14 @@ entity decoding bugfixes applied.")
                          ghc-tasty-quickcheck))
     (arguments
      `(#:cabal-revision ("1"
-                         "1zrgn63jzrpk3n3vd44zkzgw7kb5qxlvhx4nk6g3sswwrsz5j32i")))
+                         "1zrgn63jzrpk3n3vd44zkzgw7kb5qxlvhx4nk6g3sswwrsz5j32i")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "aeson.cabal"
+               (("QuickCheck\\s+>=.*")
+                "QuickCheck >=2.14.2 && <2.16\n")))))))
     (home-page "https://github.com/haskell/aeson")
     (synopsis "Fast JSON parsing and encoding")
     (description
