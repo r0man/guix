@@ -16164,13 +16164,13 @@ a = Solo a .  Note: it's not a @@newtype@@ . @@Solo@@ is available in
 (define-public ghc-indexed-traversable-instances
   (package
     (name "ghc-indexed-traversable-instances")
-    (version "0.1.1.2")
+    (version "0.1.2")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "indexed-traversable-instances" version))
        (sha256
-        (base32 "0jippsyqg8ss61z5vc6vfjmlrirwc69kr4azs5s9z0fcbj4lx6qg"))))
+        (base32 "1hf75x729c3348yvgxk0pjab2mmwi0xxcw3h2yb6c78lp8pvcarw"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "indexed-traversable-instances")))
     (inputs (list ghc-indexed-traversable ghc-onetuple ghc-tagged
@@ -16179,7 +16179,14 @@ a = Solo a .  Note: it's not a @@newtype@@ . @@Solo@@ is available in
                          ghc-tasty-quickcheck))
     (arguments
      `(#:cabal-revision ("2"
-                         "0yrww1y9zrnqwymik9kkdqkx81n3jhr0kq27lpvy1gp297hy7m80")))
+                         "0yrww1y9zrnqwymik9kkdqkx81n3jhr0kq27lpvy1gp297hy7m80")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "indexed-traversable-instances.cabal"
+               (("QuickCheck\\s+>=.*")
+                "QuickCheck >=2.14.2 && <2.16\n")))))))
     (home-page
      "https://hackage.haskell.org/package/indexed-traversable-instances")
     (synopsis
