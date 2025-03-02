@@ -592,7 +592,14 @@ permissions while atomically writing to a file.")
                          ghc-tasty-quickcheck ghc-vector))
     (arguments
      `(#:cabal-revision ("2"
-                         "00jyrn2asz1kp698l3fyh19xxxz4npf1993y041x9b9cq239smn0")))
+                         "00jyrn2asz1kp698l3fyh19xxxz4npf1993y041x9b9cq239smn0")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "attoparsec.cabal"
+               (("QuickCheck\\s+>=.*")
+                "QuickCheck >= 2.13.2 && < 2.16,")))))))
     (home-page "https://github.com/bgamari/attoparsec")
     (synopsis "Fast combinator parsing for bytestrings and text")
     (description
