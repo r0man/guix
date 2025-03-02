@@ -12841,7 +12841,14 @@ function which generates instances.")
                          ghc-tasty-quickcheck))
     (arguments
      `(#:cabal-revision ("4"
-                         "1n39yfk21xz8y1xvkh01651yysk2zp5qac22l5pq2hi7scczmxaw")))
+                         "1n39yfk21xz8y1xvkh01651yysk2zp5qac22l5pq2hi7scczmxaw")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "time-compat.cabal"
+               (("QuickCheck\\s+>=.*")
+                "QuickCheck >= 2.13.2 && < 2.16\n")))))))
     (home-page "https://github.com/haskellari/time-compat")
     (synopsis "Compatibility package for time")
     (description "This package tries to compat as many @code{time}
