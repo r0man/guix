@@ -372,13 +372,13 @@ development.")
 (define-public ghc-quickcheck-instances
   (package
     (name "ghc-quickcheck-instances")
-    (version "0.3.32")
+    (version "0.3.29.1")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "quickcheck-instances" version))
        (sha256
-        (base32 "10zz62j1jplk392c90hkg9mfk8piyp5ify94jp3rld722phg5xa8"))))
+        (base32 "0jx2wfy7y5dr14s9i457g2aah4isjxry4mlbqhj7vlav6ib84gdj"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "quickcheck-instances")))
     (inputs (list ghc-quickcheck
@@ -403,7 +403,14 @@ development.")
                   ghc-text-short))
     (arguments
      `(#:cabal-revision ("2"
-                         "118xy4z4dy4bpkzsp98daiv3l4n5j7ph9my0saca7cqjybqwkcip")))
+                         "118xy4z4dy4bpkzsp98daiv3l4n5j7ph9my0saca7cqjybqwkcip")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "quickcheck-instances.cabal"
+               ((", QuickCheck\\s+>=.*")
+                ", QuickCheck >=2.14.2 && <2.16\n")))))))
     (home-page "https://github.com/haskellari/qc-instances")
     (synopsis "Common quickcheck instances")
     (description "This package provides QuickCheck instances for types
