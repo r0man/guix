@@ -3853,19 +3853,26 @@ excluding @file{.lhs} files.")
 (define-public ghc-exceptions
   (package
     (name "ghc-exceptions")
-    (version "0.10.4")
+    (version "0.10.9")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "exceptions" version))
        (sha256
         (base32
-         "1kw4pmx7j7zwbdwm0dyn9rcs6kp4byfxy48861yxdz6gam1zn2sd"))))
+         "0h5y2rqg7kz4ic59n5i7619766mzfpqcdill3l712nihs3q2nk4v"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "exceptions")))
     (arguments
      `(#:cabal-revision
-       ("2" "1154g0dqil2xf4wc1v6gndzhnbf5saf2dzf77c6lcjxssx360m6j")))
+       ("2" "1154g0dqil2xf4wc1v6gndzhnbf5saf2dzf77c6lcjxssx360m6j")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "exceptions.cabal"
+               (("QuickCheck\\s+>= 2.5.*")
+                "QuickCheck                 >= 2.5      && < 2.16")))))))
     (native-inputs
      (list ghc-quickcheck ghc-test-framework ghc-test-framework-hunit
            ghc-test-framework-quickcheck2))
