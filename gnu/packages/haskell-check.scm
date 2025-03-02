@@ -774,6 +774,27 @@ used to test the in-development version of Hspec.")
 Haskell, inspired by the Ruby library RSpec.")
     (license license:expat)))
 
+(define-public ghc-hspec-api
+  (package
+    (name "ghc-hspec-api")
+    (version "2.11.11")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (hackage-uri "hspec-api" version))
+       (sha256
+        (base32 "1qfwd4dg5nb457jimyi2mxmab7p6v49plbcbch4riic2bs4f57x4"))))
+    (build-system haskell-build-system)
+    (properties '((upstream-name . "hspec-api")))
+    (inputs (list ghc-hspec-core))
+    (native-inputs (list ghc-hspec ghc-hspec-discover))
+    (home-page "https://hspec.github.io/")
+    (synopsis "A Testing Framework for Haskell")
+    (description
+     "This package provides a stable API that can be used to extend Hspec's
+functionality.")
+    (license license:expat)))
+
 (define-public ghc-hspec-contrib
   (package
     (name "ghc-hspec-contrib")
