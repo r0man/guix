@@ -677,6 +677,13 @@ JUnit tool for Java.")
     (build-system haskell-build-system)
     (properties '((upstream-name . "hspec-discover")))
     (native-inputs (list ghc-quickcheck ghc-hspec-meta ghc-mockery-bootstrap))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "hspec-discover.cabal"
+               ((", hspec-meta ==.*") ", hspec-meta\n")))))))
     (home-page "http://hspec.github.io/")
     (synopsis "Automatically discover and run Hspec tests")
     (description "hspec-discover is a tool which automatically discovers and
