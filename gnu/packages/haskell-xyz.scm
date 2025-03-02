@@ -8417,7 +8417,14 @@ easily work with command-line options.")
     (native-inputs (list ghc-quickcheck))
     (arguments
      `(#:cabal-revision ("1"
-                         "1mhyjlmb1hylmhv77w6gq663drpyiqd09w1x1vy4d63lr46mypyb")))
+                         "1mhyjlmb1hylmhv77w6gq663drpyiqd09w1x1vy4d63lr46mypyb")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "optparse-applicative.cabal"
+               ((", QuickCheck .*>= 2.8.*")
+                ", QuickCheck                      >= 2.8 && < 2.16")))))))
     (home-page "https://github.com/pcapriotti/optparse-applicative")
     (synopsis "Utilities and combinators for parsing command line options")
     (description "This package provides utilities and combinators for parsing
