@@ -446,13 +446,13 @@ use HUnit assertions as QuickCheck properties.")
 (define-public ghc-quickcheck
   (package
     (name "ghc-quickcheck")
-    (version "2.14.3")
+    (version "2.15.0.1")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "QuickCheck" version))
        (sha256
-        (base32 "0085lwy14r7hk7ibmv8d7d54ja9zin0ijf0b27xai898dfrj43sw"))))
+        (base32 "0zvfydg44ibs1br522rzvdlxj9mpz0h62js1hay1sj5gvdnj3cm3"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "QuickCheck")))
     (inputs
