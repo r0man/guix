@@ -13843,6 +13843,14 @@ helper functions for Lists, Maybes, Tuples, Functions.")
                   ghc-uuid-types))
     (native-inputs (list ghc-quickcheck ghc-tasty ghc-tasty-hunit
                          ghc-tasty-quickcheck))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "uuid.cabal"
+               (("QuickCheck\\s+>=.*")
+                "QuickCheck        >=2.14.2  && <2.16\n")))))))
     (home-page "https://github.com/hvr/uuid")
     (synopsis "Haskell library to create, compare, parse, and print UUIDs")
     (description "This Haskell library provides utilities creating, comparing,
