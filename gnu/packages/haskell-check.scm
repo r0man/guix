@@ -190,22 +190,32 @@ framework}.")
 (define-public ghc-tasty-hspec
   (package
     (name "ghc-tasty-hspec")
-    (version "1.2.0.2")
+    (version "1.2.0.4")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "tasty-hspec" version))
        (sha256
-        (base32 "0cfcpi25jmnmzfzsx364qsj68q6gyph5z112kl8ja222hnhhr2n2"))))
+        (base32 "1hk1nkjvhp89xxgzj6dhbgw0fknnghpng6afq4i39hjkwv5p78ni"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "tasty-hspec")))
     (inputs (list ghc-hspec
+                  ghc-hspec-api
                   ghc-hspec-core
                   ghc-quickcheck
                   ghc-tasty
                   ghc-tasty-smallcheck
                   ghc-tasty-quickcheck
                   ghc-tagged))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "tasty-hspec.cabal"
+               (("hspec-core .*,") "hspec-core ^>= 2.11.1,")
+               (("hspec-api .*,") "hspec-api ^>= 2.11.1,")
+               (("QuickCheck .*,") "QuickCheck ^>= 2.15,")))))))
     (home-page "https://github.com/mitchellwrosen/tasty-hspec")
     (synopsis "Hspec support for the Tasty test framework")
     (description
