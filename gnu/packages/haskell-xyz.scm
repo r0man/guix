@@ -1479,13 +1479,13 @@ the resulting type will be insensitive to cases.")
 (define-public ghc-cassava
   (package
     (name "ghc-cassava")
-    (version "0.5.3.0")
+    (version "0.5.3.2")
     (source (origin
               (method url-fetch)
               (uri (hackage-uri "cassava" version))
               (sha256
                (base32
-                "1gp954w05bj83z4i6isq2qxi1flqwppsgxxrp1f75mrs8cglbj5l"))))
+                "1jd9s10z2y3hizrpy3iaw2vvqmk342zxhwkky57ba39cbli5vlis"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "cassava")))
     (inputs (list ghc-attoparsec
