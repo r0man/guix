@@ -557,19 +557,26 @@ reporting and test statistics output.")
 (define-public ghc-test-framework-quickcheck2
   (package
     (name "ghc-test-framework-quickcheck2")
-    (version "0.3.0.5")
+    (version "0.3.0.6")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "test-framework-quickcheck2" version))
        (sha256
         (base32
-         "0ngf9vvby4nrdf1i7dxf5m9jn0g2pkq32w48xdr92n9hxka7ixn9"))))
+         "1d0w2q9sm8aayk0aj1zr2irpnqwpzixn6pdfq1i904vs1kkb2xin"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "test-framework-quickcheck2")))
     (arguments
      `(#:cabal-revision
-       ("3" "0mglqfimla4vvv80mg08aj76zf4993wmngqlirh05h8i9nmgv6lh")))
+       ("3" "0mglqfimla4vvv80mg08aj76zf4993wmngqlirh05h8i9nmgv6lh")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "test-framework-quickcheck2.cabal"
+               ((", QuickCheck            >= 2.4.*")
+                ", QuickCheck            >= 2.4    && <= 2.16\n")))))))
     (inputs
      (list ghc-extensible-exceptions ghc-quickcheck ghc-random
            ghc-test-framework))
