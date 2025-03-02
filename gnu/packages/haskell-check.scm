@@ -743,17 +743,24 @@ used to test the in-development version of Hspec.")
 (define-public ghc-hspec
   (package
     (name "ghc-hspec")
-    (version "2.9.7")
+    (version "2.11.11")
     (source (origin
               (method url-fetch)
               (uri (hackage-uri "hspec" version))
               (sha256
                (base32
-                "092sfqjkargxxszp9jjqa8ldjz0xv34jwn6k21q59ys5ckvsrpc1"))))
+                "14azyf0gc09wjr8sr955bbjxrjpgx75vbv6yv2szc9pv9dfmxyp1"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "hspec")))
     (inputs (list ghc-quickcheck ghc-hspec-core hspec-discover
                   ghc-hspec-expectations))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "hspec.cabal"
+               (("hspec-discover ==2.11.11") "hspec-discover\n")))))))
     (home-page "http://hspec.github.io/")
     (synopsis "Testing Framework for Haskell")
     (description "This library provides the Hspec testing framework for
