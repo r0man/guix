@@ -3638,6 +3638,16 @@ but is otherwise agnostic to:
     (inputs (list ghc-bifunctors ghc-profunctors ghc-semigroupoids))
     (native-inputs (list ghc-test-framework ghc-test-framework-quickcheck2
                          ghc-quickcheck))
+    (arguments
+     `(#:cabal-revision ("2"
+                         "1lx6ls938vssg75ib2fr1ww4nsig2rkhjc6x57yfinx1yb9r62vz")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "either.cabal"
+               (("QuickCheck\\s+>=.*")
+                "QuickCheck >= 2.9 && < 2.16\n")))))))
     (home-page "https://github.com/ekmett/either/")
     (synopsis "Provides an either monad transformer for Haskell")
     (description "This Haskell package provides an either monad transformer.")
