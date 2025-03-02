@@ -362,13 +362,13 @@ development.")
 (define-public ghc-quickcheck-instances
   (package
     (name "ghc-quickcheck-instances")
-    (version "0.3.29.1")
+    (version "0.3.32")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "quickcheck-instances" version))
        (sha256
-        (base32 "0jx2wfy7y5dr14s9i457g2aah4isjxry4mlbqhj7vlav6ib84gdj"))))
+        (base32 "10zz62j1jplk392c90hkg9mfk8piyp5ify94jp3rld722phg5xa8"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "quickcheck-instances")))
     (inputs (list ghc-quickcheck
