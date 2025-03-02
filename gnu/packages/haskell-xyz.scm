@@ -9710,13 +9710,13 @@ keys, in linear time.")
 (define-public ghc-psqueues
   (package
     (name "ghc-psqueues")
-    (version "0.2.7.3")
+    (version "0.2.8.1")
     (source (origin
               (method url-fetch)
               (uri (hackage-uri "psqueues" version))
               (sha256
                (base32
-                "1cmz7spfzx7niglmsphnndh0m4b8njkn0fhb9nshbnbq6nx515yh"))))
+                "0xrz47nq9mksdg1h9zh5dlhwfrfj4nbbrgsjpskv8wz314pi0znb"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "psqueues")))
     (inputs (list ghc-hashable))
