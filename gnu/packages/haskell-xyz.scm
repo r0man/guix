@@ -14864,6 +14864,14 @@ for compilers with @code{PolyKinds}.")
     (build-system haskell-build-system)
     (properties '((upstream-name . "selective")))
     (native-inputs (list ghc-quickcheck))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "selective.cabal"
+               (("QuickCheck\\s+>= 2.8.*")
+                "QuickCheck             >= 2.8     && < 2.16,\n")))))))
     (home-page "https://github.com/snowleopard/selective")
     (synopsis "Selective applicative functors")
     (description
