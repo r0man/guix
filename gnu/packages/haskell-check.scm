@@ -783,14 +783,14 @@ Haskell, inspired by the Ruby library RSpec.")
 (define-public ghc-hspec-expectations
   (package
     (name "ghc-hspec-expectations")
-    (version "0.8.2")
+    (version "0.8.4")
     (source
      (origin
        (method url-fetch)
        (uri (hackage-uri "hspec-expectations" version))
        (sha256
         (base32
-         "1vxl9zazbaapijr6zmcj72j9wf7ka1pirrjbwddwwddg3zm0g5l1"))))
+         "1zr1pqchcwglfr5dvcrgc1l5x924n9w09n2zr68dmkqf4dzdx3bv"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "hspec-expectations")))
     ;; Tests depend on ghc-nanospec.
