@@ -727,13 +727,13 @@ a WAI handler, via the native Haskell TLS implementation.")
 (define-public ghc-websockets
   (package
     (name "ghc-websockets")
-    (version "0.12.7.3")
+    (version "0.13.0.0")
     (source (origin
               (method url-fetch)
               (uri (hackage-uri "websockets" version))
               (sha256
                (base32
-                "0g3z0n4irf3gvbdf9p97jq05ybdg0gwjy5bj4nfc7ivsvyhaic6k"))))
+                "1da95b71akggyikbxdmja3gcaqrz8sp6ri5jrsyavc2ickvi9y4s"))))
     (build-system haskell-build-system)
     (properties '((upstream-name . "websockets")))
     (inputs (list ghc-async
@@ -752,7 +752,14 @@ a WAI handler, via the native Haskell TLS implementation.")
                          ghc-test-framework-quickcheck2))
     (arguments
      `(#:cabal-revision ("1"
-                         "1yx97y6jl74vy200y43vjxfyzx338kh10dx8vxkjhr0mfh36wldq")))
+                         "13cm6xkiq1dg6vmh3xx33m3503360bvb7bfl66w65iq1x3maf80c")
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "websockets.cabal"
+               (("QuickCheck\\s+>=.*")
+                "QuickCheck >=2.14.2 && <2.16,\n")))))))
     (home-page "http://jaspervdj.be/websockets")
     (synopsis "Write WebSocket-capable servers in Haskell")
     (description
@@ -2282,4 +2289,3 @@ aims to be compliant with @url{https://www.w3.org/TR/cors}.")
     (description
      "This package provides a simple network runner library in Haskell.")
     (license license:bsd-3)))
-
