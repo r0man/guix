@@ -6043,7 +6043,12 @@ minimal overhead.  No FFI required.")
            (lambda _
              (substitute* "integer-logarithms.cabal"
                (("(tasty)\\s+[^,]+" all dep)
-                dep)))))))
+                dep))))
+         (add-before 'configure 'update-constraints
+           (lambda _
+             (substitute* "integer-logarithms.cabal"
+               ((", QuickCheck\\s+>=.*")
+                ", QuickCheck >=2.14.1 && <2.16")))))))
     (home-page "https://github.com/Bodigrim/integer-logarithms")
     (synopsis "Integer logarithms")
     (description
