@@ -26,6 +26,7 @@
   #:use-module (guix scripts)
   #:use-module (guix scripts build)
   #:use-module (guix store)
+  #:use-module (guix utils)
   #:use-module (guix gexp)
   #:use-module (guix ui)
   #:use-module ((guix status) #:select (with-status-verbosity))
@@ -54,6 +55,8 @@
   (display (G_ "Usage: guix deploy [OPTION] FILE...
 Perform the deployment specified by FILE.\n"))
   (show-build-options-help)
+  (show-cross-build-options-help)
+  (show-native-build-options-help)
   (newline)
   (display (G_ "
   -h, --help             display this help and exit"))
@@ -93,21 +96,22 @@ Perform the deployment specified by FILE.\n"))
          (option '(#\x "execute") #f #f
                  (lambda (opt name arg result)
                    (alist-cons 'execute-command? #t result)))
-         (option '(#\s "system") #t #f
-                 (lambda (opt name arg result)
-                   (alist-cons 'system arg
-                               (alist-delete 'system result eq?))))
          (option '(#\v "verbosity") #t #f
                  (lambda (opt name arg result)
                    (let ((level (string->number* arg)))
                      (alist-cons 'verbosity level
                                  (alist-delete 'verbosity result)))))
 
-         %standard-build-options))
+         (append
+          %standard-build-options
+          %standard-native-build-options
+          %standard-cross-build-options)))
 
 (define %default-options
   ;; Alist of default option values.
   `((verbosity . 1)
+    (system . ,(%current-system))
+    (target . #f)
     (debug . 0)
     (graft? . #t)
     (substitutes? . #t)
@@ -186,9 +190,13 @@ Perform the deployment specified by FILE.\n"))
             (when (deploy-error-should-roll-back c)
               (info (G_ "rolling back ~a...~%")
                     (machine-display-name machine))
-              (run-with-store store (roll-back-machine machine)))
+              (run-with-store store (roll-back-machine machine)
+                              #:system (%current-system)
+                              #:target (%current-target-system)))
             (apply throw (deploy-error-captured-args c))))
-      (run-with-store store (deploy-machine machine))
+      (run-with-store store (deploy-machine machine)
+           #:system (%current-system)
+           #:target (%current-target-system))
 
     (info (G_ "successfully deployed ~a~%")
           (machine-display-name machine))))
@@ -266,7 +274,9 @@ otherwise."
                (loop (cons line lines))))))))
 
   (match (run-with-store store
-           (machine-remote-eval machine invocation))
+           (machine-remote-eval machine invocation)
+           #:system (%current-system)
+           #:target (%current-target-system))
     ((code output)
      (match code
        ((? zero?)
@@ -325,7 +335,9 @@ otherwise."
                                               #:verbosity
                                               (assoc-ref opts 'verbosity)
                                               #:dry-run? dry-run?)
-            (parameterize ((%graft? (assq-ref opts 'graft?)))
+            (parameterize ((%graft? (assq-ref opts 'graft?))
+                           (%current-target-system (assoc-ref opts 'target))
+                           (%current-system (assoc-ref opts 'system)))
               (if execute-command?
                   (match command
                     (("--" command ..1)
