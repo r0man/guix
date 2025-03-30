@@ -293,6 +293,9 @@ the configuration files of the speaker models.")
   (group
    (string "speakersafetyd")
    "The group to run the Speaker Safety Daemon as.")
+  (log-file
+   (string "/var/log/speakersafetyd.log")
+   "The path to the Speaker Safety Daemon log file.")
   (maximum-gain-reduction
    (integer 7)
    "Maximum gain reduction before panicking, useful for debugging.")
@@ -305,7 +308,7 @@ the configuration files of the speaker models.")
 
 (define speakersafetyd-accounts
   (match-record-lambda <speakersafetyd-configuration>
-      ( blackbox-directory configuration-directory group
+      ( blackbox-directory configuration-directory group log-file
         maximum-gain-reduction speakersafetyd user)
     (list (user-group
            (name group)
@@ -320,7 +323,7 @@ the configuration files of the speaker models.")
 
 (define speakersafetyd-activation
   (match-record-lambda <speakersafetyd-configuration>
-      ( blackbox-directory configuration-directory group
+      ( blackbox-directory configuration-directory group log-file
         maximum-gain-reduction speakersafetyd user)
     (with-imported-modules (source-module-closure '((gnu build activation)))
       #~(begin
@@ -334,7 +337,7 @@ the configuration files of the speaker models.")
 
 (define speakersafetyd-shepherd-service
   (match-record-lambda <speakersafetyd-configuration>
-      ( blackbox-directory configuration-directory group
+      ( blackbox-directory configuration-directory group log-file
         maximum-gain-reduction speakersafetyd user)
     (shepherd-service
      (documentation "Run the speaker safety daemon")
@@ -346,6 +349,7 @@ the configuration files of the speaker models.")
                      "--blackbox-path" #$blackbox-directory
                      "--max-reduction" (number->string #$maximum-gain-reduction))
                #:group #$group
+               #:log-file #$log-file
                #:supplementary-groups '("audio")
                #:user #$user))
      (stop #~(make-kill-destructor)))))
