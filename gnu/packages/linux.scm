@@ -10424,7 +10424,7 @@ found in custom keyboard firmware like QMK.")
 (define-public pipewire
   (package
     (name "pipewire")
-    (version "1.4.0")
+    (version "1.4.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -10433,7 +10433,7 @@ found in custom keyboard firmware like QMK.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "00c9irz566lmg51wxq5ywpvql6svvjxk9zjqx61xkvsnhz1526f6"))))
+                "0kqicbigz71ipnslqks8bz6zibcaqr9bydd7b9kb7k4sz5vg655v"))))
     (build-system meson-build-system)
     (arguments
      (list
